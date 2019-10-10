@@ -17,6 +17,7 @@ urlpatterns = [
 
     path('netboot/x64', views_netboot.efi_static_server("shimx64.efi")),
     path('netboot/grubx64.efi', views_netboot.efi_static_server('grubx64.efi')),
+    path('netboot//grubx64.efi', views_netboot.efi_static_server('grubx64.efi')),
     path('netboot/grub.cfg', views_netboot.static_grub_cfg),
     path('netboot/grubcfg/<str:mac_addr>/', views_netboot.dynamic_grub_cfg),
     path('netboot/kickstart/<str:mac_addr>/', views_netboot.kickstart),
