@@ -10,6 +10,8 @@ router = routers.DefaultRouter()
 router.register(r'devices/unowned', views.UnownedDevicesViewSet)
 
 urlpatterns = [
+    path('', views.index),
+
     path('admin/', admin.site.urls),
 
     path('api/', include(router.urls)),
