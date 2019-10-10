@@ -22,6 +22,7 @@ def static_grub_cfg(request):
     return HttpResponse('configfile "/netboot/grubcfg/${net_default_mac}"')
 
 def static_proxy(request, mac_addr, filetype):
+    device = get_object_or_404(Device, mac_address=mac_addr.upper())
     return HttpResponse('Returning file "%s" for mac addr "%s"' % (filetype, mac_addr))
 
 def dynamic_grub_cfg(request, mac_addr):
