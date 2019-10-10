@@ -1,0 +1,10 @@
+menuentry "reload" --unrestricted {
+  normal
+}
+menuentry "reboot" --unrestricted {
+  reboot
+}
+set default=0
+set timeout=60
+set timeout_style="countdown"
+clear

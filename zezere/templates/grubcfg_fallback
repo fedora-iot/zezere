@@ -1,0 +1,8 @@
+{% include "grubcfg_autoreload" %}
+{% include "grubcfg_user" %}
+
+echo "This device has booted from the provisioning server at {{ service_url }}."
+echo "Something has gone wrong when generating the correct grub configuration."
+echo "Please contact the administrator of the above URL to inform."
+echo ""
+echo -n "Automatic config reload in: "
