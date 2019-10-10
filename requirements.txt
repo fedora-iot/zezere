@@ -1,3 +1,4 @@
 django>=1.12
+djangorestframework
 django-ipware
 gunicorn
