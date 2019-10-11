@@ -47,11 +47,11 @@ def dynamic_grub_cfg(request, mac_addr):
             device.full_clean()
             device.save()
         context['device'] = device
-        return render(request, 'grubcfg', context, content_type='text/plain')
+        return render(request, 'netboot/grubcfg', context, content_type='text/plain')
 
     except:
         logging.getLogger(__name__).error("Error generating grubcfg for '%s', serving fallback: ", mac_addr, exc_info=True)
-        return render(request, 'grubcfg_fallback', context, content_type='text/plain')
+        return render(request, 'netboot/grubcfg_fallback', context, content_type='text/plain')
 
 def kickstart(request, mac_addr):
     device = get_object_or_404(Device, mac_address=mac_addr.upper())

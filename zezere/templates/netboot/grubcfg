@@ -1,11 +1,11 @@
-{% include "grubcfg_user" %}
+{% include "./grubcfg_user" %}
 
 {% if False %}
 TODO: runrequest
 
 {% elif device.owner is not None %}
 
-{% include "grubcfg_autoreload" %}
+{% include "./grubcfg_autoreload" %}
 echo "This device ({{ device.mac_address }}) has booted from the provisioning server at {{ service_url }}."
 echo "The device is owned by {{ device.owner }}."
 echo "Please visit the management portal at the above URL to provision this device."
@@ -14,7 +14,7 @@ echo -n "Automatic config reload in: "
 
 {% else %}
 
-{% include "grubcfg_autoreload" %}
+{% include "./grubcfg_autoreload" %}
 echo "This device has booted from the provisioning server at {{ service_url }}."
 echo "Please visit the management panel at the above URL to claim this device."
 echo "Device MAC address: {{ device.mac_address }}."

@@ -1,5 +1,5 @@
-{% include "grubcfg_autoreload" %}
-{% include "grubcfg_user" %}
+{% include "./grubcfg_user" %}
+{% include "./grubcfg_autoreload" %}
 
 echo "This device has booted from the provisioning server at {{ service_url }}."
 echo "Something has gone wrong when generating the correct grub configuration."
