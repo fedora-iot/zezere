@@ -19,7 +19,7 @@ def efi_static_server(filename):
     return perform
 
 def static_grub_cfg(request):
-    return HttpResponse('configfile "/netboot/grubcfg/${net_default_mac}"')
+    return HttpResponse('configfile "/netboot/grubcfg/${net_default_mac}"', content_type="text/plain")
 
 def static_proxy(request, mac_addr, filetype):
     device = get_object_or_404(Device, mac_address=mac_addr.upper())
@@ -55,8 +55,8 @@ def dynamic_grub_cfg(request, mac_addr):
 
 def kickstart(request, mac_addr):
     device = get_object_or_404(Device, mac_address=mac_addr.upper())
-    return HttpResponse('Returning kickstart for "%s"' % mac_addr)
+    return HttpResponse('Returning kickstart for "%s"' % mac_addr, content_type="text/plain")
 
 def ignition_cfg(request, mac_addr):
     device = get_object_or_404(Device, mac_address=mac_addr.upper())
-    return HttpResponse('Returning ignitioncfg for "%s"' % mac_addr)
+    return HttpResponse('Returning ignitioncfg for "%s"' % mac_addr, content_type="text/plain")
