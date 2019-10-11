@@ -1,0 +1,16 @@
+{% extends "./master.html" %}
+
+{% block title %}Claim unowned devices{% endblock %}
+
+{% block content %}
+Unowned devices from this IP address:
+{% for device in unclaimed_devices %}
+<form action="/portal/claim" method="POST">
+    MAC address: {{ device.mac_address }}
+    {% csrf_token %}
+    <input type="hidden" name="mac_address" value="{{ device.mac_address }}">
+    <input type="submit" value="Claim">
+</form>
+<br />
+{% endfor %}
+{% endblock %}
