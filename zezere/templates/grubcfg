@@ -17,7 +17,7 @@ echo -n "Automatic config reload in: "
 {% include "grubcfg_autoreload" %}
 echo "This device has booted from the provisioning server at {{ service_url }}."
 echo "Please visit the management panel at the above URL to claim this device."
-echo "Device MAC address: {{ .Device.GetMacAddrs }}."
+echo "Device MAC address: {{ device.mac_address }}."
 echo ""
 echo -n "Automatic config reload in: "
 
