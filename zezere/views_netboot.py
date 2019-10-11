@@ -2,12 +2,12 @@ import logging
 import os
 
 from django.http import FileResponse, HttpResponse
-from django.template import loader
 from django.shortcuts import render, get_object_or_404
 
 from ipware import get_client_ip
 
 from .models import Device
+
 
 def efi_static_server(filename):
     app_root = os.path.abspath(os.path.dirname(__file__))
@@ -18,12 +18,22 @@ def efi_static_server(filename):
 
     return perform
 
+
 def static_grub_cfg(request):
-    return HttpResponse('configfile "/netboot/grubcfg/${net_default_mac}"', content_type="text/plain")
+    return HttpResponse(
+        'configfile "/netboot/grubcfg/${net_default_mac}"',
+        content_type="text/plain",
+    )
+
 
 def static_proxy(request, mac_addr, filetype):
     device = get_object_or_404(Device, mac_address=mac_addr.upper())
-    return HttpResponse('Returning file "%s" for mac addr "%s"' % (filetype, mac_addr))
+    return HttpResponse(
+        'Returning file "%s" for mac addr "%s": %s' %
+        (filetype, mac_addr, device),
+        content_type="application/octet-stream",
+    )
+
 
 def dynamic_grub_cfg(request, mac_addr):
     context = {
@@ -47,16 +57,38 @@ def dynamic_grub_cfg(request, mac_addr):
             device.full_clean()
             device.save()
         context['device'] = device
-        return render(request, 'netboot/grubcfg', context, content_type='text/plain')
+        return render(
+            request,
+            'netboot/grubcfg',
+            context,
+            content_type='text/plain',
+        )
 
-    except:
-        logging.getLogger(__name__).error("Error generating grubcfg for '%s', serving fallback: ", mac_addr, exc_info=True)
-        return render(request, 'netboot/grubcfg_fallback', context, content_type='text/plain')
+    except Exception:
+        logging.getLogger(__name__).error(
+            "Error generating grubcfg for '%s', serving fallback: ",
+            mac_addr,
+            exc_info=True,
+        )
+        return render(
+            request,
+            'netboot/grubcfg_fallback',
+            context,
+            content_type='text/plain',
+        )
+
 
 def kickstart(request, mac_addr):
     device = get_object_or_404(Device, mac_address=mac_addr.upper())
-    return HttpResponse('Returning kickstart for "%s"' % mac_addr, content_type="text/plain")
+    return HttpResponse(
+        'Returning kickstart for "%s": %s' % (mac_addr, device),
+        content_type="text/plain",
+    )
+
 
 def ignition_cfg(request, mac_addr):
     device = get_object_or_404(Device, mac_address=mac_addr.upper())
-    return HttpResponse('Returning ignitioncfg for "%s"' % mac_addr, content_type="text/plain")
+    return HttpResponse(
+        'Returning ignitioncfg for "%s": %s' % (mac_addr, device),
+        content_type="text/plain",
+    )
