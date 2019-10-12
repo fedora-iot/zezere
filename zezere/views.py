@@ -1,14 +1,13 @@
 from django.contrib.auth.models import User, Group
 from django.http import FileResponse, HttpResponse
+from django.shortcuts import redirect
 from rest_framework import viewsets
 
 from zezere.models import Device, UnownedDeviceSerializer
 
 
 def index(request):
-    return HttpResponse(
-        "Please visit the portal",
-    )
+    return redirect("/portal")
 
 
 class UnownedDevicesViewSet(viewsets.ModelViewSet):
