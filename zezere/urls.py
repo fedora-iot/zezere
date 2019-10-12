@@ -12,7 +12,7 @@ router.register(r'devices/unowned', views.UnownedDevicesViewSet)
 
 urlpatterns = [
     path('', views.index),
-    path('ping/', Views.ping),
+    path('ping/', views.ping),
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
 
