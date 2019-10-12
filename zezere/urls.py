@@ -16,8 +16,9 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
 
     # Portal
-    path('portal', views_portal.index),
-    path('portal/claim', views_portal.claim),
+    path('accounts/signup/', views.SignUp.as_view(), name='signup'),
+    path('portal/', views_portal.index),
+    path('portal/claim/', views_portal.claim),
 
     # API
     path('api/', include(router.urls)),
