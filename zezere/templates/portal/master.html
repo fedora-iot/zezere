@@ -3,6 +3,13 @@
         <title>{% block title %}Master title{% endblock %}</title>
     </head>
     <body>
+        {% if user.is_authenticated %}
+            <a href="/accounts/logout/">Log out</a>
+        {% else %}
+            <a href="/accounts/signup/">Register</a>
+        {% endif %}
+        <hr />
+
         {% block content %}
         Master content
         {% endblock %}
