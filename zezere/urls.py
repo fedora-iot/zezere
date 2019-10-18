@@ -91,11 +91,6 @@ urlpatterns = [
         name='netboot_grubcfg_static',
     ),
     path(
-        'netboot/<str:arch>/grubcfg/<str:mac_addr>',
-        views_netboot.dynamic_grub_cfg,
-        name='netboot_grubcfg_dynamic',
-    ),
-    path(
         'netboot/<str:arch>/<str:filetype>',
         views_netboot.arch_file,
         name='netboot_arch_file',
@@ -104,6 +99,11 @@ urlpatterns = [
         'netboot/<str:arch>//<str:filetype>',
         views_netboot.arch_file,
         name='netboot_arch_file_double_slash',
+    ),
+    path(
+        'netboot/grubcfg/<str:mac_addr>',
+        views_netboot.dynamic_grub_cfg,
+        name='netboot_grubcfg_dynamic',
     ),
     path(
         'netboot/kickstart/<str:mac_addr>',
