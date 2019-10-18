@@ -50,7 +50,7 @@ def arch_file(request, arch, filetype):
 
 def static_grub_cfg(request, arch):
     return HttpResponse(
-        'configfile "/netboot/grubcfg/${net_default_mac}"',
+        'configfile "${http_path}/grubcfg/${net_default_mac}"',
         content_type="text/plain",
     )
 
