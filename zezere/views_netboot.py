@@ -1,7 +1,11 @@
 import logging
 import os
 
-from django.http import FileResponse, HttpResponse
+from django.http import (
+    FileResponse,
+    HttpResponse,
+    HttpResponseNotFound,
+)
 from django.shortcuts import render, get_object_or_404
 
 from ipware import get_client_ip
@@ -9,17 +13,39 @@ from ipware import get_client_ip
 from .models import Device
 
 
-def efi_static_server(filename):
+ARCHES = {
+    "x86_64": {
+        "initial": "shimx64.efi",
+        "grubx64.efi": "grubx64.efi",
+    }
+}
+
+
+def index(request):
+    context = {
+        'service_url': request.build_absolute_uri('/netboot'),
+        'arches': ARCHES.keys(),
+    }
+    return render(
+        request,
+        "netboot/index.html",
+        context,
+    )
+
+
+def arch_file(request, arch, filetype):
+    archfiles = ARCHES.get(arch)
+    if not archfiles:
+        return HttpResponseNotFound("Architecture not found")
+    filename = archfiles.get(filetype)
+    if not filename:
+        return HttpResponseNotFound("File not found for architecture")
     app_root = os.path.abspath(os.path.dirname(__file__))
-    path = os.path.join(app_root, "efi_binaries", filename)
-
-    def perform(request):
-        return FileResponse(open(path, 'rb'), content_type="application/efi")
-
-    return perform
+    path = os.path.join(app_root, "efi_binaries", arch, filename)
+    return FileResponse(open(path, 'rb'), content_type="application/efi")
 
 
-def static_grub_cfg(request):
+def static_grub_cfg(request, arch):
     return HttpResponse(
         'configfile "/netboot/grubcfg/${net_default_mac}"',
         content_type="text/plain",
@@ -35,7 +61,7 @@ def static_proxy(request, mac_addr, filetype):
     )
 
 
-def dynamic_grub_cfg(request, mac_addr):
+def dynamic_grub_cfg(request, arch, mac_addr):
     context = {
         'service_url': request.build_absolute_uri('/'),
     }

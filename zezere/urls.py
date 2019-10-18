@@ -81,29 +81,29 @@ urlpatterns = [
 
     # Netboot
     path(
-        'netboot/x64',
-        views_netboot.efi_static_server("shimx64.efi"),
-        name='netboot_shim',
+        'netboot',
+        views_netboot.index,
+        name='netboot_index',
     ),
     path(
-        'netboot/grubx64.efi',
-        views_netboot.efi_static_server('grubx64.efi'),
-        name='netboot_grub',
-    ),
-    path(
-        'netboot//grubx64.efi',
-        views_netboot.efi_static_server('grubx64.efi'),
-        name='netboot_grub_double_slash',
-    ),
-    path(
-        'netboot/grub.cfg',
+        'netboot/<str:arch>/grub.cfg',
         views_netboot.static_grub_cfg,
         name='netboot_grubcfg_static',
     ),
     path(
-        'netboot/grubcfg/<str:mac_addr>',
+        'netboot/<str:arch>/grubcfg/<str:mac_addr>',
         views_netboot.dynamic_grub_cfg,
         name='netboot_grubcfg_dynamic',
+    ),
+    path(
+        'netboot/<str:arch>/<str:filetype>',
+        views_netboot.arch_file,
+        name='netboot_arch_file',
+    ),
+    path(
+        'netboot/<str:arch>//<str:filetype>',
+        views_netboot.arch_file,
+        name='netboot_arch_file_double_slash',
     ),
     path(
         'netboot/kickstart/<str:mac_addr>',

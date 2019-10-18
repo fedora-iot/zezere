@@ -1,0 +1,23 @@
+<html>
+    <head>
+        <title>Netboot instructions</title>
+        <body>
+            <h1>Welcome to netboot</h1>
+            In order to use this, please configure your devices to attempt UEFI HTTP boot from:
+
+            <table border="1">
+                <tr>
+                    <th>Architecture</th>
+                    <th>URL</th>
+                </tr>
+
+                {% for arch in arches %}
+                    <tr>
+                        <td>{{ arch }}</td>
+                        <td>{{ service_url }}/{{ arch }}/initial</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </body>
+    </head>
+</html>
