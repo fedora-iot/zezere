@@ -55,7 +55,7 @@ def static_grub_cfg(request, arch):
     )
 
 
-def static_proxy(request, mac_addr, filetype):
+def static_proxy(request, arch, mac_addr, filetype):
     device = get_object_or_404(Device, mac_address=mac_addr.upper())
 
     if device.run_request is None:
