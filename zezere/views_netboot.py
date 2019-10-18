@@ -70,7 +70,10 @@ def dynamic_grub_cfg(request, arch, mac_addr):
         remote_ip, _ = get_client_ip(request)
 
         try:
-            device = Device.objects.get(mac_address=mac_addr.upper())
+            device = Device.objects.get(
+                mac_address=mac_addr.upper(),
+                architecture=arch,
+            )
             if device.last_ip_address != remote_ip:
                 device.last_ip_address = remote_ip
                 device.save()
@@ -78,6 +81,7 @@ def dynamic_grub_cfg(request, arch, mac_addr):
             # Create new Device
             device = Device(
                 mac_address=mac_addr.upper(),
+                architecture=arch,
                 last_ip_address=remote_ip,
             )
             device.full_clean()

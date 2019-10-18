@@ -88,6 +88,10 @@ class Device(RulesModel):
         max_length=20,
         validators=[RegexValidator("^([0-9A-F]{2}[:]){5}([0-9A-F]{2})$")],
     )
+    architecture = models.CharField(
+        "Architecture",
+        max_length=50,
+    )
     hostname = models.CharField(
         "Device hostname",
         max_length=200,
