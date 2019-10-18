@@ -1,5 +1,6 @@
-django>=1.12
+django>=2.1
 djangorestframework
 django-ipware
 gunicorn
 psycopg2
+rules

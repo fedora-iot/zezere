@@ -48,6 +48,21 @@ urlpatterns = [
         views_portal.claim,
         name='portal_claim',
     ),
+    path(
+        'portal/devices/',
+        views_portal.devices,
+        name='portal_devices',
+    ),
+    path(
+        'portal/devices/runreq/<str:mac_addr>/',
+        views_portal.new_runreq,
+        name='portal_newrunreq',
+    ),
+    path(
+        'portal/devices/runreq/<str:mac_addr>/clean/',
+        views_portal.clean_runreq,
+        name='portal_cleanrunreq',
+    ),
 
     # API
     path(

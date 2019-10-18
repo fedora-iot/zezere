@@ -1,0 +1,16 @@
+[
+    {
+        "model": "zezere.runrequest",
+        "pk": 1,
+        "fields": {
+            "auto_generated_id": "fedora-iot-31"
+        }
+    },
+    {
+        "model": "zezere.runrequest",
+        "pk": 2,
+        "fields": {
+            "auto_generated_id": "fedora-iot-32"
+        }
+    }
+]

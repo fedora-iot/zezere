@@ -1,7 +1,10 @@
+{% load grubcfg %}
+
 {% include "./grubcfg_user" %}
 
-{% if False %}
-TODO: runrequest
+{% if device.run_request %}
+
+{% render_runreq_grubcfg device %}
 
 {% elif device.owner is not None %}
 

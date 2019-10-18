@@ -1,16 +1,21 @@
 {% extends "./master.html" %}
 
+{% load rules %}
+
 {% block title %}Claim unowned devices{% endblock %}
 
 {% block content %}
 Unowned devices from this IP address:
 {% for device in unclaimed_devices %}
-<form method="POST">
-    MAC address: {{ device.mac_address }}
-    {% csrf_token %}
-    <input type="hidden" name="mac_address" value="{{ device.mac_address }}">
-    <input type="submit" value="Claim">
-</form>
-<br />
+    {% has_perm 'zezere.claim_device' user device as can_claim_device %}
+    {% if can_claim_device %}
+        <form method="POST">
+            MAC address: {{ device.mac_address }}
+            {% csrf_token %}
+            <input type="hidden" name="mac_address" value="{{ device.mac_address }}">
+            <input type="submit" value="Claim">
+        </form>
+        <br />
+    {% endif %}
 {% endfor %}
 {% endblock %}

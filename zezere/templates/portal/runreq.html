@@ -1,0 +1,16 @@
+{% extends "./master.html" %}
+
+{% block title %}Request provisioning{% endblock %}
+
+{% block content %}
+Select runrequest for {{ device.mac_address }}:
+<form method="POST">
+    {% csrf_token %}
+    <select name="runrequest">
+        {% for runreq in runreqs %}
+            <option value="{{ runreq.id }}">{{ runreq.auto_generated_id }}</option>
+        {% endfor %}
+    </select>
+    <input type="Submit" value="Schedule">
+</form>
+{% endblock %}

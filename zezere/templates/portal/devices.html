@@ -1,0 +1,41 @@
+{% extends "./master.html" %}
+
+{% load rules %}
+
+{% block title %}Device list{% endblock %}
+
+{% block content %}
+Your devices:
+<table border="1">
+    <tr>
+        <th>Mac Address</th>
+        <th>Hostname</th>
+        <th>Run Request</th>
+        <th>Actions</th>
+    </tr>
+    {% for device in devices %}
+        {% has_perm 'zezere.view_device' user device as can_view_device %}
+        {% if can_view_device %}
+            <tr>
+                <td>{{ device.mac_address }}</td>
+                <td>{{ device.hostname }}</td>
+                <td>
+                    {% if device.run_request %}
+                        {{ device.run_request }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if device.run_request %}
+                        <form method="POST" action="/portal/devices/runreq/{{ device.mac_address }}/clean/">
+                            {% csrf_token %}
+                            <input type="submit" value="Cancel runrequest">
+                        </form>
+                    {% else %}
+                        <a href="/portal/devices/runreq/{{ device.mac_address }}">Submit provision request</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endif %}
+    {% endfor %}
+</table>
+{% endblock %}
