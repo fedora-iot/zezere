@@ -5,12 +5,15 @@ from django.http import (
     FileResponse,
     HttpResponse,
     HttpResponseNotFound,
+    StreamingHttpResponse,
 )
 from django.shortcuts import render, get_object_or_404
+import requests
 
 from ipware import get_client_ip
 
-from .models import Device
+from .models import Device, RunRequest
+from .runreqs import replace_device_strings
 
 
 ARCHES = {
@@ -54,10 +57,29 @@ def static_grub_cfg(request, arch):
 
 def static_proxy(request, mac_addr, filetype):
     device = get_object_or_404(Device, mac_address=mac_addr.upper())
-    return HttpResponse(
-        'Returning file "%s" for mac addr "%s": %s' %
-        (filetype, mac_addr, device),
-        content_type="application/octet-stream",
+
+    if device.run_request is None:
+        raise Exception("No run request for device")
+    elif device.run_request.type == RunRequest.TYPE_EFI:
+        raise Exception("Invalid runreq type for proxydl")
+
+    dlurl = None
+    if filetype == "kernel":
+        dlurl = device.run_request.kernel_url
+    elif filetype == "initrd":
+        dlurl = device.run_request.initrd_url
+
+    if not dlurl:
+        raise Exception("Invalid filetype")
+
+    dlurl = replace_device_strings(request, dlurl, device)
+
+    resp = requests.get(dlurl, stream=True)
+    resp.raise_for_status()
+
+    return StreamingHttpResponse(
+        resp.iter_content(chunk_size=8192),
+        content_type='application/octet-stream',
     )
 
 

@@ -2,13 +2,17 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 
+from . import models
+
 
 AUTO_RUNREQS = {
     'fedora-iot-31': {
+        "type": "ok",
         "compose_root": "https://kojipkgs.fedoraproject.org/compose/iot/latest-Fedora-IoT-31",
         "compose_name": "IoT",
     },
     'fedora-iot-32': {
+        "type": "ok",
         "compose_root": "https://kojipkgs.fedoraproject.org/compose/iot/latest-Fedora-IoT-32",
         "compose_name": "IoT",
     },
@@ -28,24 +32,42 @@ def generate_auto_runreq(sender, instance, **kwargs):
         # Nothing to auto-generate
         return
     info = AUTO_RUNREQS[instance.auto_generated_id]
-    compose_url = f"{info['compose_root']}/compose/{info['compose_name']}/x86_64/os"
+    instance.type = info['type']
+    compose_url = f"{info['compose_root']}/compose/{info['compose_name']}/:arch:/os"
     instance.kernel_url = f"{compose_url}/isolinux/vmlinuz"
     instance.kernel_cmd = f"inst.repo={compose_url} inst.ks=:urls.kickstart: inst.ks.sendmac inst.ks.sendsn noshell inst.cmdline inst.sshd=0 ip=dhcp"
     instance.initrd_url = f"{compose_url}/isolinux/initrd.img"
 
 
-def replace_strs(request, value, device, runreq):
+def replace_device_strings(request, value, device):
     value = value.replace(
         ":urls.kickstart:",
         request.build_absolute_uri(f'/netboot/kickstart/{device.mac_address}'),
+    )
+    value = value.replace(
+        ":arch:",
+        device.architecture,
     )
 
     return value
 
 
 def generate_runreq_grubcfg(request, device, runreq):
-    return replace_strs(request, f"""
-linux {runreq.kernel_url} {runreq.kernel_cmd}
-initrd {runreq.initrd_url}
+    if runreq.type == models.RunRequest.TYPE_ONLINE_KERNEL:
+        proxy_kernel_url = request.build_absolute_uri(
+            f'/netboot/proxydl/{device.mac_address}/kernel')
+        proxy_initrd_url = request.build_absolute_uri(
+            f'/netboot/proxydl/{device.mac_address}/initrd')
+
+        return replace_device_strings(request, f"""
+linux {proxy_kernel_url} {runreq.kernel_cmd}
+initrd {proxy_initrd_url}
 boot
-    """, device, runreq)
+        """, device)
+
+    elif runreq.type == models.RunRequest.TYPE_EFI:
+        raise Exception("Build EFI app chainload")
+        return ""
+
+    else:
+        raise Exception("Invalid runreq type")

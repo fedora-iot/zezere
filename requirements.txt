@@ -4,3 +4,4 @@ django-ipware
 gunicorn
 psycopg2
 rules
+requests
