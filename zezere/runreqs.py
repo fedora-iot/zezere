@@ -48,16 +48,18 @@ def replace_device_strings(request, value, device):
         ":arch:",
         device.architecture,
     )
+    value = value.replace(
+        ":mac_addr:",
+        device.mac_address,
+    )
 
     return value
 
 
 def generate_runreq_grubcfg(request, device, runreq):
     if runreq.type == models.RunRequest.TYPE_ONLINE_KERNEL:
-        proxy_kernel_url = request.build_absolute_uri(
-            f'/netboot/proxydl/{device.mac_address}/kernel')
-        proxy_initrd_url = request.build_absolute_uri(
-            f'/netboot/proxydl/{device.mac_address}/initrd')
+        proxy_kernel_url = "proxydl/:mac_addr:/kernel"
+        proxy_initrd_url = "proxydl/:mac_addr:/initrd"
 
         return replace_device_strings(request, f"""
 linux {proxy_kernel_url} {runreq.kernel_cmd}
