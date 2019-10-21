@@ -118,12 +118,16 @@ class Device(RulesModel):
             "claim": rules.can_claim,
         }
 
+    def __str__(self):
+        return "Device %s" % self.mac_address
+
     def clean_mac_address(self):
         return self.cleaned_data['mac_address'].upper()
 
     mac_address = models.CharField(
         "Device MAC Address",
         max_length=20,
+        unique=True,
         validators=[RegexValidator("^([0-9A-F]{2}[:]){5}([0-9A-F]{2})$")],
     )
     architecture = models.CharField(
