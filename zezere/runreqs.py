@@ -20,7 +20,7 @@ AUTO_RUNREQS = {
             "osname": "fedora-iot-devel",
             "remote": "fedora-iot",
             "repo": "https://kojipkgs.fedoraproject.org/compose/iot/repo/",
-            "ref": "fedora/devel/x86_64/iot",
+            "ref": "fedora/devel/:arch:/iot",
         },
     },
     'fedora-iot-32': {
@@ -108,19 +108,19 @@ def generate_runreq_grubcfg(request, device, runreq):
         proxy_kernel_url = "proxydl/:mac_addr:/kernel"
         proxy_initrd_url = "proxydl/:mac_addr:/initrd"
 
-        return replace_device_strings(request, f"""
+        return f"""
 linux {proxy_kernel_url} {runreq.kernel_cmd}
 initrd {proxy_initrd_url}
 boot
-        """, device)
+        """
 
     elif runreq.type == models.RunRequest.TYPE_EFI:
-        return replace_device_strings(request, f"""
+        return f"""
 insmod part_gpt
 insmod chain
 set root='(hd0,gpt1)'
 chainloader {runreq.settings.efi_path}
-        """, device)
+        """
 
     else:
         raise Exception("Invalid runreq type")

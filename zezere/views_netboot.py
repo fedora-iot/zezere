@@ -7,7 +7,8 @@ from django.http import (
     HttpResponseNotFound,
     StreamingHttpResponse,
 )
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404
+from django.template import loader
 import requests
 
 from ipware import get_client_ip
@@ -24,12 +25,40 @@ ARCHES = {
 }
 
 
+def render_for_device(device, request, template_name, context=None,
+                      content_type=None, status=None, using=None):
+    content = loader.render_to_string(
+        template_name,
+        context,
+        request, using=using,
+    )
+
+    # Make replacements
+    if device:
+        content = content.replace(
+            ":urls.kickstart:",
+            request.build_absolute_uri(
+                f'/netboot/kickstart/{device.mac_address}'),
+        )
+        content = content.replace(
+            ":arch:",
+            device.architecture,
+        )
+        content = content.replace(
+            ":mac_addr:",
+            device.mac_address,
+        )
+
+    return HttpResponse(content, content_type, status)
+
+
 def index(request):
     context = {
         'service_url': request.build_absolute_uri('/netboot'),
         'arches': ARCHES.keys(),
     }
-    return render(
+    return render_for_device(
+        None,
         request,
         "netboot/index.html",
         context,
@@ -111,7 +140,8 @@ def dynamic_grub_cfg(request, arch, mac_addr):
             device.full_clean()
             device.save()
         context['device'] = device
-        return render(
+        return render_for_device(
+            device,
             request,
             'netboot/grubcfg',
             context,
@@ -124,7 +154,8 @@ def dynamic_grub_cfg(request, arch, mac_addr):
             mac_addr,
             exc_info=True,
         )
-        return render(
+        return render_for_device(
+            device,
             request,
             'netboot/grubcfg_fallback',
             context,
@@ -137,7 +168,8 @@ def kickstart(request, mac_addr):
     context = {
         "device": device,
     }
-    return render(
+    return render_for_device(
+        device,
         request,
         'netboot/kickstart',
         context,
@@ -150,7 +182,8 @@ def ignition_cfg(request, mac_addr):
     context = {
         "device": device,
     }
-    return render(
+    return render_for_device(
+        device,
         request,
         'netboot/ignition_cfg',
         context,
