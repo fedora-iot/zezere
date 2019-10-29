@@ -80,6 +80,9 @@ def generate_auto_runreq(sender, instance, **kwargs):
         settings['type'] = 'ostree'
         settings['ostree'] = info['ostree']
 
+    if info['type'] == models.RunRequest.TYPE_EFI:
+        settings['efi_path'] = info['efi_path']
+
     instance._settings = settings
 
 
@@ -112,8 +115,12 @@ boot
         """, device)
 
     elif runreq.type == models.RunRequest.TYPE_EFI:
-        raise Exception("Build EFI app chainload")
-        return ""
+        return replace_device_strings(request, f"""
+insmod part_gpt
+insmod chain
+set root='(hd0,gpt1)'
+chainloader {runreq.settings.efi_path}
+        """, device)
 
     else:
         raise Exception("Invalid runreq type")
