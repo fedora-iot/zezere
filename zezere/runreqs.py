@@ -122,6 +122,7 @@ insmod part_gpt
 insmod chain
 set root='(hd0,gpt1)'
 chainloader {runreq.settings.efi_path}
+boot
         """
 
     else:
