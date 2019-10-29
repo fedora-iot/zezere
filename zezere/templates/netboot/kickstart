@@ -30,3 +30,4 @@ echo "contenturl=mirrorlist=https://ostree.fedoraproject.org/iot/mirrorlist" >>/
 {% endif %}
 
 curl --fail :urls.base:netboot/postboot/:mac_addr:
+%end
