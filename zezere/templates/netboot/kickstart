@@ -28,5 +28,7 @@ echo "gpgkeypath=/etc/pki/rpm-gpg/" >>/etc/ostree/remotes.d/{{ device.run_reques
 echo "contenturl=mirrorlist=https://ostree.fedoraproject.org/iot/mirrorlist" >>/etc/ostree/remotes.d/{{ device.run_request.settings.ostree.remote }}.conf
 {% endif %}
 
+echo "provision123" | clevis luks bind -d /dev/sda3 tpm2 '{}' -k -
+
 curl --fail :urls.base:netboot/postboot/:mac_addr:
 %end
