@@ -77,10 +77,12 @@ def static_proxy(request, arch, mac_addr, filetype):
     resp = requests.get(dlurl, stream=True)
     resp.raise_for_status()
 
-    return StreamingHttpResponse(
+    ourresp = StreamingHttpResponse(
         resp.iter_content(chunk_size=8192),
         content_type='application/octet-stream',
     )
+    ourresp['Content-Length'] = resp.headers['Content-Length']
+    return ourresp
 
 
 def dynamic_grub_cfg(request, arch, mac_addr):
