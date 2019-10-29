@@ -6,7 +6,7 @@ from . import models
 
 
 AUTO_RUNREQS = {
-    'fedora-iot-31': {
+    'fedora-iot-stable': {
         "type": "ok",
         "next": "fedora-installed",
 
@@ -17,13 +17,13 @@ AUTO_RUNREQS = {
 
         "install_type": "ostree",
         "ostree": {
-            "osname": "fedora-iot-devel",
+            "osname": "fedora-iot-stable",
             "remote": "fedora-iot",
             "repo": "https://kojipkgs.fedoraproject.org/compose/iot/repo/",
-            "ref": "fedora/devel/:arch:/iot",
+            "ref": "fedora/stable/:arch:/iot",
         },
     },
-    'fedora-iot-32': {
+    'fedora-iot-rawhide': {
         "type": "ok",
         "next": "fedora-installed",
 
@@ -34,6 +34,8 @@ AUTO_RUNREQS = {
 
         "install_type": "ostree",
         "ostree": {
+            "osname": "fedora-iot-rawhide",
+            "remote": "fedora-iot",
             "repo": "https://kojipkgs.fedoraproject.org/compose/iot/repo/",
             "ref": "fedora/rawhide/:arch:/iot",
         },

@@ -209,4 +209,6 @@ def postboot(request, mac_addr):
         RunRequest,
         auto_generated_id=device.run_request.settings['next'],
     )
-    return HttpResponse("Setting device %s to %s" % (device, nextrunreq))
+    device.run_request = nextrunreq
+    device.save()
+    return HttpResponse("Set device %s to %s" % (device, nextrunreq))
