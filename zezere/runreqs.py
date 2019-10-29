@@ -41,7 +41,7 @@ AUTO_RUNREQS = {
 
     "fedora-installed": {
         "type": "ef",
-        "efi_path": "/EFI/fedora/shimx64.efi",
+        "efi_path": "/EFI/fedora/grubx64.efi",
     }
 }
 
