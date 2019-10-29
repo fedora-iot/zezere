@@ -28,3 +28,5 @@ sed -i -e "s/gpg-verify=false/gpg-verify=true/" /etc/ostree/remotes.d/{{ device.
 echo "gpgkeypath=/etc/pki/rpm-gpg/" >>/etc/ostree/remotes.d/{{ device.run_request.settings.ostree.remote }}.conf
 echo "contenturl=mirrorlist=https://ostree.fedoraproject.org/iot/mirrorlist" >>/etc/ostree/remotes.d/{{ device.run_request.settings.ostree.remote }}.conf
 {% endif %}
+
+curl --fail :urls.base:netboot/postboot/:mac_addr:

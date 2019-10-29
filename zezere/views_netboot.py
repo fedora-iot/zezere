@@ -34,6 +34,10 @@ def render_for_device(device, request, template_name, context=None,
     )
 
     # Make replacements
+    content = content.replace(
+        ":urls.base:",
+        request.build_absolute_uri("/"),
+    )
     if device:
         content = content.replace(
             ":urls.kickstart:",
