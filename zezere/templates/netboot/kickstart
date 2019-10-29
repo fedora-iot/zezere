@@ -14,11 +14,17 @@ ostreesetup --nogpg --osname={{ device.run_request.settings.ostree.osname }} --r
 {% if device.run_request.settings.clear_parts %}
 clearpart --all --initlabel
 zerombr
-reqpart --add-boot
-part pv.01 --grow --encrypted --passphrase=provision123
-volgroup installed pv.01
-logvol / --size=20000 --fstype=xfs --vgname=installed --name=root
+autopart --nohome --encrypted --fstype=xfs --passphrase=provision123
 {% endif %}
 
+# reboot
 halt
 install
+
+
+%post
+{% if device.run_request.settings.type == "ostree" %}
+sed -i -e "s/gpg-verify=false/gpg-verify=true/" /etc/ostree/remotes.d/{{ device.run_request.settings.ostree.remote }}.conf
+echo "gpgkeypath=/etc/pki/rpm-gpg/" >>/etc/ostree/remotes.d/{{ device.run_request.settings.ostree.remote }}.conf
+echo "contenturl=mirrorlist=https://ostree.fedoraproject.org/iot/mirrorlist" >>/etc/ostree/remotes.d/{{ device.run_request.settings.ostree.remote }}.conf
+{% endif %}

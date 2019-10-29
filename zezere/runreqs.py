@@ -53,7 +53,8 @@ def generate_auto_runreq(sender, instance, **kwargs):
     instance.type = info['type']
     compose_url = f"{info['compose_root']}/compose/{info['compose_name']}/:arch:/os"
     instance.kernel_url = f"{compose_url}/isolinux/vmlinuz"
-    instance.kernel_cmd = f"inst.repo={compose_url} inst.ks=:urls.kickstart: inst.ks.sendmac inst.ks.sendsn noshell inst.cmdline inst.sshd=0 ip=dhcp"
+    #instance.kernel_cmd = f"inst.repo={compose_url} inst.ks=:urls.kickstart: inst.ks.sendmac inst.ks.sendsn noshell inst.cmdline inst.sshd=0 ip=dhcp"
+    instance.kernel_cmd = f"inst.repo={compose_url} inst.ks=:urls.kickstart: inst.ks.sendmac inst.ks.sendsn inst.cmdline inst.sshd=0 ip=dhcp"
     instance.initrd_url = f"{compose_url}/isolinux/initrd.img"
 
     settings = {
