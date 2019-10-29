@@ -156,3 +156,17 @@ def ignition_cfg(request, mac_addr):
         context,
         content_type='text/plain',
     )
+
+
+def postboot(request, mac_addr):
+    device = get_object_or_404(Device, mac_address=mac_addr.upper())
+    if not device.run_request:
+        raise ValueError("Device has no run request")
+    if 'next' not in device.run_request.settings:
+        raise ValueError("Current runrequest does not have a next state")
+
+    nextrunreq = get_object_or_404(
+        RunRequest,
+        auto_generated_id=device.run_request.settings['next'],
+    )
+    return HttpResponse("Setting device %s to %s" % (device, nextrunreq))

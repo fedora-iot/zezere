@@ -8,6 +8,8 @@ from . import models
 AUTO_RUNREQS = {
     'fedora-iot-31': {
         "type": "ok",
+        "next": "installed-fedora",
+
         "compose_root": "https://kojipkgs.fedoraproject.org/compose/iot/latest-Fedora-IoT-31",
         "compose_name": "IoT",
 
@@ -23,6 +25,8 @@ AUTO_RUNREQS = {
     },
     'fedora-iot-32': {
         "type": "ok",
+        "next": "installed-fedora",
+
         "compose_root": "https://kojipkgs.fedoraproject.org/compose/iot/latest-Fedora-IoT-32",
         "compose_name": "IoT",
 
@@ -34,6 +38,11 @@ AUTO_RUNREQS = {
             "ref": "fedora/rawhide/:arch:/iot",
         },
     },
+
+    "fedora-installed": {
+        "type": "ef",
+        "efi_path": "/EFI/fedora/shimx64.efi",
+    }
 }
 
 
@@ -51,17 +60,23 @@ def generate_auto_runreq(sender, instance, **kwargs):
         return
     info = AUTO_RUNREQS[instance.auto_generated_id]
     instance.type = info['type']
-    compose_url = f"{info['compose_root']}/compose/{info['compose_name']}/:arch:/os"
-    instance.kernel_url = f"{compose_url}/isolinux/vmlinuz"
-    #instance.kernel_cmd = f"inst.repo={compose_url} inst.ks=:urls.kickstart: inst.ks.sendmac inst.ks.sendsn noshell inst.cmdline inst.sshd=0 ip=dhcp"
-    instance.kernel_cmd = f"inst.repo={compose_url} inst.ks=:urls.kickstart: inst.ks.sendmac inst.ks.sendsn inst.cmdline inst.sshd=0 ip=dhcp"
-    instance.initrd_url = f"{compose_url}/isolinux/initrd.img"
+
+    if 'compose_root' in info:
+        compose_url = f"{info['compose_root']}/compose/{info['compose_name']}/:arch:/os"
+        instance.kernel_url = f"{compose_url}/isolinux/vmlinuz"
+        #instance.kernel_cmd = f"inst.repo={compose_url} inst.ks=:urls.kickstart: inst.ks.sendmac inst.ks.sendsn noshell inst.cmdline inst.sshd=0 ip=dhcp"
+        instance.kernel_cmd = f"inst.repo={compose_url} inst.ks=:urls.kickstart: inst.ks.sendmac inst.ks.sendsn inst.cmdline inst.sshd=0 ip=dhcp"
+        instance.initrd_url = f"{compose_url}/isolinux/initrd.img"
 
     settings = {
-        "clear_parts": info['clear_parts'],
+        "clear_parts": info.get('clear_parts'),
+        "raw": info,
     }
 
-    if info['install_type'] == 'ostree':
+    if 'next' in info:
+        settings['next'] = info['next']
+
+    if info.get('install_type') == 'ostree':
         settings['type'] = 'ostree'
         settings['ostree'] = info['ostree']
 

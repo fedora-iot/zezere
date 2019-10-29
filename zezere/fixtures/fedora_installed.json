@@ -1,0 +1,10 @@
+[
+    {
+        "model": "zezere.runrequest",
+        "pk": 5,
+        "fields": {
+            "auto_generated_id": "fedora-installed",
+            "type": "ef"
+        }
+    }
+]
