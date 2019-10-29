@@ -8,7 +8,7 @@ from . import models
 AUTO_RUNREQS = {
     'fedora-iot-31': {
         "type": "ok",
-        "next": "installed-fedora",
+        "next": "fedora-installed",
 
         "compose_root": "https://kojipkgs.fedoraproject.org/compose/iot/latest-Fedora-IoT-31",
         "compose_name": "IoT",
@@ -25,7 +25,7 @@ AUTO_RUNREQS = {
     },
     'fedora-iot-32': {
         "type": "ok",
-        "next": "installed-fedora",
+        "next": "fedora-installed",
 
         "compose_root": "https://kojipkgs.fedoraproject.org/compose/iot/latest-Fedora-IoT-32",
         "compose_name": "IoT",
