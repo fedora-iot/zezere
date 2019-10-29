@@ -101,16 +101,6 @@ urlpatterns = [
         name='netboot_proxydl',
     ),
     path(
-        'netboot/<str:arch>/<str:filetype>',
-        views_netboot.arch_file,
-        name='netboot_arch_file',
-    ),
-    path(
-        'netboot/<str:arch>//<str:filetype>',
-        views_netboot.arch_file,
-        name='netboot_arch_file_double_slash',
-    ),
-    path(
         'netboot/kickstart/<str:mac_addr>',
         views_netboot.kickstart,
         name='netboot_kickstart',
@@ -119,5 +109,15 @@ urlpatterns = [
         'netboot/ignition/<str:mac_addr>',
         views_netboot.ignition_cfg,
         name='netboot_ignition_cfg',
+    ),
+    path(
+        'netboot/<str:arch>/<str:filetype>',
+        views_netboot.arch_file,
+        name='netboot_arch_file',
+    ),
+    path(
+        'netboot/<str:arch>//<str:filetype>',
+        views_netboot.arch_file,
+        name='netboot_arch_file_double_slash',
     ),
 ]
