@@ -21,7 +21,10 @@ ARCHES = {
     "x86_64": {
         "initial": "shimx64.efi",
         "grubx64.efi": "grubx64.efi",
-    }
+    },
+    "aarch64": {
+        "initial": "BOOTAA64.EFI",
+    },
 }
 
 
