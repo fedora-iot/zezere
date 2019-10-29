@@ -1,7 +1,5 @@
 {% load grubcfg %}
 
-set debug=all
-
 {% include "./grubcfg_user" %}
 
 {% if device.run_request %}

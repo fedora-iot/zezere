@@ -90,11 +90,9 @@ def generate_runreq_grubcfg(request, device, runreq):
         proxy_initrd_url = "proxydl/:mac_addr:/initrd"
 
         return replace_device_strings(request, f"""
-menuentry "install" --unrestricted {{
-    linux {proxy_kernel_url} {runreq.kernel_cmd}
-    initrd {proxy_initrd_url}
-    boot
-}}
+linux {proxy_kernel_url} {runreq.kernel_cmd}
+initrd {proxy_initrd_url}
+boot
         """, device)
 
     elif runreq.type == models.RunRequest.TYPE_EFI:
