@@ -111,6 +111,11 @@ urlpatterns = [
         name='netboot_ignition_cfg',
     ),
     path(
+        'netboot/postboot/<str:mac_addr>',
+        views_netboot.postboot,
+        name='netboot_postboot',
+    ),
+    path(
         'netboot/<str:arch>/<str:filetype>',
         views_netboot.arch_file,
         name='netboot_arch_file',
