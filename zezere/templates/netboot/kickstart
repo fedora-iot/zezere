@@ -17,8 +17,7 @@ zerombr
 autopart --nohome --encrypted --fstype=xfs --passphrase=provision123
 {% endif %}
 
-# reboot
-halt
+reboot
 install
 
 
