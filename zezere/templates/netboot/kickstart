@@ -18,6 +18,7 @@ part pv.01 --grow --encrypted --passphrase=provision123
 volgroup installed pv.01
 logvol / --size=30000 --fstype=xfs --vgname=installed --name=root
 logvol /var/home --size=50000 --fstype=xfs --vgname=installed --name=home
+{% endif %}
 
 halt
 install
