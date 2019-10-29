@@ -134,15 +134,25 @@ def dynamic_grub_cfg(request, arch, mac_addr):
 
 def kickstart(request, mac_addr):
     device = get_object_or_404(Device, mac_address=mac_addr.upper())
-    return HttpResponse(
-        'Returning kickstart for "%s": %s' % (mac_addr, device),
-        content_type="text/plain",
+    context = {
+        "device": device,
+    }
+    return render(
+        request,
+        'netboot/kickstart',
+        context,
+        content_type='text/plain',
     )
 
 
 def ignition_cfg(request, mac_addr):
     device = get_object_or_404(Device, mac_address=mac_addr.upper())
-    return HttpResponse(
-        'Returning ignitioncfg for "%s": %s' % (mac_addr, device),
-        content_type="text/plain",
+    context = {
+        "device": device,
+    }
+    return render(
+        request,
+        'netboot/ignition_cfg',
+        context,
+        content_type='text/plain',
     )

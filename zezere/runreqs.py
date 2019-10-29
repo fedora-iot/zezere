@@ -10,11 +10,29 @@ AUTO_RUNREQS = {
         "type": "ok",
         "compose_root": "https://kojipkgs.fedoraproject.org/compose/iot/latest-Fedora-IoT-31",
         "compose_name": "IoT",
+
+        "clear_parts": True,
+
+        "install_type": "ostree",
+        "ostree": {
+            "osname": "fedora-iot-devel",
+            "remote": "fedora-iot",
+            "repo": "https://kojipkgs.fedoraproject.org/compose/iot/repo/",
+            "ref": "fedora/devel/x86_64/iot",
+        },
     },
     'fedora-iot-32': {
         "type": "ok",
         "compose_root": "https://kojipkgs.fedoraproject.org/compose/iot/latest-Fedora-IoT-32",
         "compose_name": "IoT",
+
+        "clear_parts": True,
+
+        "install_type": "ostree",
+        "ostree": {
+            "repo": "https://kojipkgs.fedoraproject.org/compose/iot/repo/",
+            "ref": "fedora/rawhide/:arch:/iot",
+        },
     },
 }
 
@@ -37,6 +55,16 @@ def generate_auto_runreq(sender, instance, **kwargs):
     instance.kernel_url = f"{compose_url}/isolinux/vmlinuz"
     instance.kernel_cmd = f"inst.repo={compose_url} inst.ks=:urls.kickstart: inst.ks.sendmac inst.ks.sendsn noshell inst.cmdline inst.sshd=0 ip=dhcp"
     instance.initrd_url = f"{compose_url}/isolinux/initrd.img"
+
+    settings = {
+        "clear_parts": info['clear_parts'],
+    }
+
+    if info['install_type'] == 'ostree':
+        settings['type'] = 'ostree'
+        settings['ostree'] = info['ostree']
+
+    instance._settings = settings
 
 
 def replace_device_strings(request, value, device):

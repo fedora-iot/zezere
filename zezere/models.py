@@ -1,3 +1,5 @@
+import json
+
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.core.validators import RegexValidator, URLValidator
@@ -13,6 +15,14 @@ from .runreqs import (
     validate_runreq_autoid,
     generate_auto_runreq,
 )
+
+
+class AttrDict(dict):
+    def __getattr__(self, name):
+        ret = self[name]
+        if isinstance(ret, dict):
+            ret = AttrDict(ret)
+        return ret
 
 
 class RunRequest(RulesModel):
@@ -65,6 +75,21 @@ class RunRequest(RulesModel):
         blank=True,
         max_length=255,
     )
+
+    raw_settings = models.TextField(
+        "JSON-encoded settings",
+        null=True,
+        blank=True,
+    )
+
+    _auto_generated_settings = None
+    _settings = None
+
+    @property
+    def settings(self):
+        if self._settings is None:
+            self._settings = json.loads(self.raw_settings)
+        return AttrDict(self._settings)
 
     @property
     def is_auto_generated(self):

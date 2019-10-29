@@ -1,0 +1,23 @@
+lang en_US.UTF-8
+keyboard us
+timezone Etc/UTC
+rootpw --lock
+auth --enableshadow --passalgo=sha512
+
+{% if device.run_request.settings.type == "ostree" %}
+# TODO: Figure out how to bootstrap this, and enable GPG checking here
+# https://github.com/projectatomic/rpm-ostree/issues/190
+ostreesetup --nogpg --osname={{ device.run_request.settings.ostree.osname }} --remote={{ device.run_request.settings.ostree.remote }} --url={{ device.run_request.settings.ostree.repo }} --ref={{ device.run_request.settings.ostree.ref }}
+{% endif %}
+
+{% if device.run_request.settings.clear_parts %}
+clearpart --all --initlabel
+zerombr
+reqpart --add-boot
+part pv.01 --grow --encrypted --passphrase=provision123
+volgroup installed pv.01
+logvol / --size=30000 --fstype=xfs --vgname=installed --name=root
+logvol /var/home --size=50000 --fstype=xfs --vgname=installed --name=home
+
+halt
+install
