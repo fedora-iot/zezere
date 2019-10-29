@@ -1,7 +1,8 @@
 lang en_US.UTF-8
 keyboard us
 timezone Etc/UTC
-rootpw --lock
+#rootpw --lock
+rootpw --plaintext provision123
 auth --enableshadow --passalgo=sha512
 
 {% if device.run_request.settings.type == "ostree" %}
