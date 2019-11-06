@@ -33,6 +33,18 @@ urlpatterns = [
         name='oidc',
     ),
 
+    # Login/logout stuff
+    path(
+        'accounts/login/',
+        views.login,
+        name='login',
+    )
+    path(
+        'accounts/logout/',
+        views.logout,
+        name='logout',
+    )
+
     # Portal
     path(
         'portal/',
