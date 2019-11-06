@@ -112,6 +112,7 @@ OIDC_OP_AUTHORIZATION_ENDPOINT = os.environ.get('OIDC_RP_ENDPOINT_AUTHORIZATION'
 OIDC_OP_TOKEN_ENDPOINT = os.environ.get('OIDC_RP_ENDPOINT_TOKEN')
 OIDC_OP_USER_ENDPOINT = os.environ.get('OIDC_RP_ENDPOINT_USER')
 OIDC_OP_JWKS_ENDPOINT = os.environ.get('OIDC_RP_ENDPOINT_JWKS')
+OIDC_RP_SIGN_ALGO = os.environ.get('OIDC_RP_SIGN_ALGO')
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
