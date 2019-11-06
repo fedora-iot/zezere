@@ -12,3 +12,5 @@ DATABASES = {
         'PORT': os.environ.get('DB_PORT', ''),
     }
 }
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
