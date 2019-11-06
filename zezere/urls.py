@@ -38,12 +38,12 @@ urlpatterns = [
         'accounts/login/',
         views.login,
         name='login',
-    )
+    ),
     path(
         'accounts/logout/',
         views.logout,
         name='logout',
-    )
+    ),
 
     # Portal
     path(
