@@ -1,4 +1,4 @@
-from django.contrib.auth import logout
+from django.contrib.auth import logout as django_logout
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views import generic
@@ -21,8 +21,12 @@ def login(request):
 
 
 def logout(request):
-    logout(request)
+    django_logout(request)
     return redirect('index')
+
+
+def profile(request):
+    return redirect('/')
 
 
 class UnownedDevicesViewSet(viewsets.ModelViewSet):

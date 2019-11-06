@@ -44,6 +44,11 @@ urlpatterns = [
         views.logout,
         name='logout',
     ),
+    path(
+        'accounts/profile/',
+        views.profile,
+        name='profile',
+    ),
 
     # Portal
     path(
