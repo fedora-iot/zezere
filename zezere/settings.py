@@ -26,11 +26,18 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'mozilla_django_oidc',
     'rest_framework',
     'rules.apps.AutodiscoverRulesConfig',
 
     'zezere',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'mozilla_django_oidc.contrib.drf.OIDCAuthentication',
+    ],
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -93,9 +100,18 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTHENTICATION_BACKENDS = (
+    'mozilla_django_oidc.auth.OIDCAuthenticationBackend',
     'rules.permissions.ObjectPermissionBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
+
+# OpenID Connect configuration
+OIDC_RP_CLIENT_ID = os.environ['OIDC_RP_CLIENT_ID']
+OIDC_RP_CLIENT_SECRET = os.environ['OIDC_RP_CLIENT_SECRET']
+OIDC_OP_AUTHORIZATION_ENDPOINT = os.environ['OIDC_RP_ENDPOINT_AUTHORIZATION']
+OIDC_OP_TOKEN_ENDPOINT = os.environ['OIDC_RP_ENDPOINT_TOKEN']
+OIDC_OP_USER_ENDPOINT = os.environ['OIDC_RP_ENDPOINT_USER']
+OIDC_OP_JWKS_ENDPOINT = os.environ['OIDC_RP_ENDPOINT_JWKS']
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/

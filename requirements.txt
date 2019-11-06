@@ -5,3 +5,4 @@ gunicorn
 psycopg2
 rules
 requests
+mozilla-django-oidc

@@ -11,6 +11,7 @@ router = routers.DefaultRouter()
 router.register(r'devices/unowned', views.UnownedDevicesViewSet)
 
 urlpatterns = [
+
     path(
         '',
         views.index,
@@ -27,17 +28,12 @@ urlpatterns = [
         name='admin',
     ),
     path(
-        'accounts/',
-        include('django.contrib.auth.urls'),
-        name='accounts',
+        'oidc/',
+        include('mozilla_django_oidc.urls'),
+        name='oidc',
     ),
 
     # Portal
-    path(
-        'accounts/signup/',
-        views.SignUp.as_view(),
-        name='signup',
-    ),
     path(
         'portal/',
         views_portal.index,

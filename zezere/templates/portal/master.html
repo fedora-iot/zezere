@@ -9,7 +9,7 @@
             <a href="/portal/">Home</a>
             <a href="/accounts/logout/">Log out</a>
         {% else %}
-            <a href="/accounts/signup/">Register</a>
+            <a href="{% url('oidc_authentication_init') %}">Login</a>
         {% endif %}
         <hr />
 
