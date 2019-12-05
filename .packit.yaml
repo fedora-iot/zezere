@@ -1,0 +1,23 @@
+specfile_path: zezere.spec
+synced_files:
+  - zezere.spec
+  - .packit.yaml
+upstream_package_name: zezere
+downstream_package_name: zezere
+jobs:
+  - job: sync_from_downstream
+    trigger: commit
+  - job: propose_downstream
+    trigger: release
+    metadata:
+      dist-git-branch: master
+  - job: propose_downstream
+    trigger: release
+    metadata:
+      dist-git-branch: f31
+  - job: tests
+    trigger: pull_request
+    metadata:
+      targets:
+        - fedora-rawhide-x86_64
+        - fedora-31-x86_64
