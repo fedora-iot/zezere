@@ -6,12 +6,12 @@ from rest_framework import routers
 from zezere import views
 from zezere import views_netboot
 from zezere import views_portal
+from zezere.settings_auth import AUTH_INFO
 
 router = routers.DefaultRouter()
 router.register(r'devices/unowned', views.UnownedDevicesViewSet)
 
 urlpatterns = [
-
     path(
         '',
         views.index,
@@ -27,18 +27,8 @@ urlpatterns = [
         admin.site.urls,
         name='admin',
     ),
-    path(
-        'oidc/',
-        include('mozilla_django_oidc.urls'),
-        name='oidc',
-    ),
 
     # Login/logout stuff
-    path(
-        'accounts/login/',
-        views.login,
-        name='login',
-    ),
     path(
         'accounts/logout/',
         views.logout,
@@ -48,6 +38,11 @@ urlpatterns = [
         'accounts/profile/',
         views.profile,
         name='profile',
+    ),
+    path(
+        'accounts/signup/',
+        views.SignUp.as_view(),
+        name='signup',
     ),
 
     # Portal
@@ -138,4 +133,4 @@ urlpatterns = [
         views_netboot.arch_file,
         name='netboot_arch_file_double_slash',
     ),
-]
+] + AUTH_INFO['urlfunc']()

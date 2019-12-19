@@ -1,8 +1,9 @@
 from django.contrib.auth import logout as django_logout
+from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponse
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views import generic
-from django.shortcuts import redirect
 from rest_framework import viewsets
 
 from zezere.models import Device, UnownedDeviceSerializer
@@ -16,10 +17,6 @@ def ping(request):
     return HttpResponse("Pong")
 
 
-def login(request):
-    return redirect('oidc_authentication_init')
-
-
 def logout(request):
     django_logout(request)
     return redirect('index')
@@ -27,6 +24,12 @@ def logout(request):
 
 def profile(request):
     return redirect('/')
+
+
+class SignUp(generic.CreateView):
+    form_class = UserCreationForm
+    success_url = reverse_lazy('login')
+    template_name = 'registration/signup.html'
 
 
 class UnownedDevicesViewSet(viewsets.ModelViewSet):

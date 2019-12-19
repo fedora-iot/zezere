@@ -1,11 +1,12 @@
 import os
 
+
+#from .settings_auth import AUTH_INFO
+from .settings_auth import *
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
@@ -14,7 +15,6 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = os.environ.get('DEBUG', 'no').lower() == 'yes'
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split()
-
 
 # Application definition
 
@@ -26,18 +26,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'mozilla_django_oidc',
+] + AUTH_INFO['installed_apps'] + [
+
     'rest_framework',
     'rules.apps.AutodiscoverRulesConfig',
 
     'zezere',
 ]
 
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'mozilla_django_oidc.contrib.drf.OIDCAuthentication',
-    ],
-}
+REST_FRAMEWORK = {}
+if AUTH_INFO.get('drf_default_authentication_classes'):
+    REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'] = AUTH_INFO['drf_default_authentication_classes']
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -99,20 +98,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTHENTICATION_BACKENDS = (
-    'mozilla_django_oidc.auth.OIDCAuthenticationBackend',
+main_auth_backend = None
+
+
+AUTHENTICATION_BACKENDS = AUTH_INFO['backends'] + (
     'rules.permissions.ObjectPermissionBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
-
-# OpenID Connect configuration
-OIDC_RP_CLIENT_ID = os.environ.get('OIDC_RP_CLIENT_ID')
-OIDC_RP_CLIENT_SECRET = os.environ.get('OIDC_RP_CLIENT_SECRET')
-OIDC_OP_AUTHORIZATION_ENDPOINT = os.environ.get('OIDC_RP_ENDPOINT_AUTHORIZATION')
-OIDC_OP_TOKEN_ENDPOINT = os.environ.get('OIDC_RP_ENDPOINT_TOKEN')
-OIDC_OP_USER_ENDPOINT = os.environ.get('OIDC_RP_ENDPOINT_USER')
-OIDC_OP_JWKS_ENDPOINT = os.environ.get('OIDC_RP_ENDPOINT_JWKS')
-OIDC_RP_SIGN_ALGO = os.environ.get('OIDC_RP_SIGN_ALGO')
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
