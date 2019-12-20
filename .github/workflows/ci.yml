@@ -29,3 +29,5 @@ jobs:
         SECRET_KEY: citest
       run: |
         python -Werror manage.py test
+        # Reverse run the tests to make sure they don't depend on eachother
+        python -Werror manage.py test --reverse
