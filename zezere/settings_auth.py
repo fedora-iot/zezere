@@ -1,3 +1,5 @@
+from typing import Dict, Any, List, Optional
+
 import os
 
 from django.shortcuts import redirect
@@ -20,7 +22,7 @@ def urls_oidc():
     ]
 
 
-AUTH_METHODS = {
+AUTH_METHODS: Dict[str, Any] = {
     'oidc': {
         'backends': ('mozilla_django_oidc.auth.OIDCAuthenticationBackend',),
         'installed_apps': ['mozilla_django_oidc'],
@@ -41,13 +43,13 @@ AUTH_METHODS = {
     }
 }
 
-REST_FRAMEWORK = {
+REST_FRAMEWORK: Dict[str, List[str]] = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'mozilla_django_oidc.contrib.drf.OIDCAuthentication',
     ],
 }
 
-auth_method = None
+auth_method: Optional[str] = None
 
 # Try to auto-detect the used auth method
 for envvar in os.environ.keys():
