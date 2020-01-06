@@ -1,3 +1,5 @@
+from typing import Optional
+
 import json
 
 from django.core.exceptions import ValidationError
@@ -34,7 +36,7 @@ class RunRequest(RulesModel):
         (TYPE_EFI, "EFI application"),
     ]
 
-    auto_generated_id = models.CharField(
+    auto_generated_id: models.CharField = models.CharField(
         "Auto generated ID",
         null=True,
         blank=True,
@@ -42,48 +44,46 @@ class RunRequest(RulesModel):
         max_length=80,
         validators=[validate_runreq_autoid],
     )
-    type = models.CharField(
+    type: models.CharField = models.CharField(
         "RunRequest type",
         max_length=2,
         choices=TYPE_CHOICES,
     )
 
-    kernel_url = models.CharField(
+    kernel_url: models.URLField = models.URLField(
         "Kernel URL",
         null=True,
         blank=True,
         max_length=255,
-        validators=[URLValidator],
     )
-    kernel_cmd = models.CharField(
+    kernel_cmd: models.CharField = models.CharField(
         "Kernel Command Line",
         null=True,
         blank=True,
         max_length=255,
     )
-    initrd_url = models.CharField(
+    initrd_url: models.URLField = models.URLField(
         "InitRD URL",
         null=True,
         blank=True,
         max_length=255,
-        validators=[URLValidator],
     )
 
-    efi_application = models.CharField(
+    efi_application: models.CharField = models.CharField(
         "EFI Application path",
         null=True,
         blank=True,
         max_length=255,
     )
 
-    raw_settings = models.TextField(
+    raw_settings: models.TextField = models.TextField(
         "JSON-encoded settings",
         null=True,
         blank=True,
     )
 
     _auto_generated_settings = None
-    _settings = None
+    _settings: Optional[AttrDict] = None
 
     @property
     def settings(self):
@@ -149,35 +149,35 @@ class Device(RulesModel):
     def clean_mac_address(self):
         return self.cleaned_data['mac_address'].upper()
 
-    mac_address = models.CharField(
+    mac_address: models.CharField = models.CharField(
         "Device MAC Address",
         max_length=20,
         unique=True,
         validators=[RegexValidator("^([0-9A-F]{2}[:]){5}([0-9A-F]{2})$")],
     )
-    architecture = models.CharField(
+    architecture: models.CharField = models.CharField(
         "Architecture",
         max_length=50,
     )
-    hostname = models.CharField(
+    hostname: models.CharField = models.CharField(
         "Device hostname",
         max_length=200,
         default=None,
         blank=True,
         null=True,
     )
-    owner = models.ForeignKey(
+    owner: models.ForeignKey = models.ForeignKey(
         User,
         on_delete=models.PROTECT,
         default=None,
         blank=True,
         null=True,
     )
-    last_ip_address = models.CharField(
+    last_ip_address: models.CharField = models.CharField(
         "Last check-in IP address",
         max_length=50,
     )
-    run_request = models.ForeignKey(
+    run_request: models.ForeignKey = models.ForeignKey(
         RunRequest,
         on_delete=models.SET_NULL,
         default=None,
