@@ -1,0 +1,23 @@
+pull_request_rules:
+  - name: Automatic merge on approval
+    conditions:
+    - approved-reviews-by=@fedora-iot/zezere
+    - label=automerge
+    - status-success=DCO
+    - status-success=build
+    actions:
+      merge:
+        method: rebase
+        rebase_fallback: null
+        strict: true
+  - name: Automatic merge on test pass by maintainer
+    conditions:
+    - author=@fedora-iot/zezere
+    - label=automerge
+    - status-success=DCO
+    - status-success=build
+    actions:
+      merge:
+        method: rebase
+        rebase_fallback: null
+        strict: true
