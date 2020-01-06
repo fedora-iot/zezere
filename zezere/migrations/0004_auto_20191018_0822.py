@@ -14,11 +14,22 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='runrequest',
             name='initrd_url',
-            field=models.CharField(blank=True, max_length=255, null=True, validators=[django.core.validators.URLValidator], verbose_name='InitRD URL'),
+            field=models.CharField(
+                blank=True,
+                max_length=255,
+                null=True,
+                validators=[django.core.validators.URLValidator],  # type: ignore
+                verbose_name='InitRD URL'
+            ),
         ),
         migrations.AddField(
             model_name='runrequest',
             name='kernel_cmd',
-            field=models.CharField(blank=True, max_length=255, null=True, verbose_name='Kernel Command Line'),
+            field=models.CharField(
+                blank=True,
+                max_length=255,
+                null=True,
+                verbose_name='Kernel Command Line'
+            ),
         ),
     ]

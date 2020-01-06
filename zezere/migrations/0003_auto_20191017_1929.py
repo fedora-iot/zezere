@@ -15,11 +15,24 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='runrequest',
             name='kernel_url',
-            field=models.CharField(blank=True, max_length=255, null=True, validators=[django.core.validators.URLValidator], verbose_name='Kernel URL'),
+            field=models.CharField(
+                blank=True,
+                max_length=255,
+                null=True,
+                validators=[django.core.validators.URLValidator],  # type: ignore
+                verbose_name='Kernel URL'
+            ),
         ),
         migrations.AlterField(
             model_name='runrequest',
             name='auto_generated_id',
-            field=models.CharField(blank=True, max_length=80, null=True, unique=True, validators=[zezere.runreqs.validate_runreq_autoid], verbose_name='Auto generated ID'),
+            field=models.CharField(
+                blank=True,
+                max_length=80,
+                null=True,
+                unique=True,
+                validators=[zezere.runreqs.validate_runreq_autoid],
+                verbose_name='Auto generated ID'
+            ),
         ),
     ]
