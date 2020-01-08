@@ -19,7 +19,7 @@ jobs:
         pip install -r requirements.txt
     - name: Install analysis tools
       run: |
-        pip install mypy django-stubs flake8
+        pip install mypy django-stubs flake8 coverage diff-cover
     - name: Check typing
       run: |
         mypy zezere
@@ -33,6 +33,11 @@ jobs:
       env:
         SECRET_KEY: citest
       run: |
-        python -Werror manage.py test
-        # Reverse run the tests to make sure they don't depend on eachother
-        python -Werror manage.py test --reverse
+        python -Werror -m coverage run --source "." manage.py test
+    - name: Report on test coverage
+      run: |
+        coverage report
+    - name: Ensure test coverage
+      run: |
+        coverage xml
+        diff-cover coverage.xml --fail-under 100
