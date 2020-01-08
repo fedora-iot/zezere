@@ -33,7 +33,12 @@ jobs:
       env:
         SECRET_KEY: citest
       run: |
-        python -Werror -m coverage run --source "." manage.py test
+        python -Werror -m coverage run --append manage.py test
+    - name: Test migrations
+      env:
+        SECRET_KEY: citest
+      run: |
+        python -m coverage run --append manage.py migrate
     - name: Report on test coverage
       run: |
         coverage report
