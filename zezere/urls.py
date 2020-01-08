@@ -71,6 +71,21 @@ urlpatterns = [
         views_portal.clean_runreq,
         name='portal_cleanrunreq',
     ),
+    path(
+        'portal/sshkeys/',
+        views_portal.sshkeys,
+        name='portal_sshkeys',
+    ),
+    path(
+        'portal/sshkeys/add/',
+        views_portal.add_ssh_key,
+        name='portal_sshkeys_add',
+    ),
+    path(
+        'portal/sshkeys/delete/',
+        views_portal.remove_ssh_key,
+        name='portal_sshkeys_remove',
+    ),
 
     # API
     path(

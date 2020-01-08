@@ -1,0 +1,37 @@
+{% extends "./master.html" %}
+
+{% load rules %}
+
+{% block title %}SSH Keys{% endblock %}
+
+{% block content %}
+Your SSH Keys:
+<table border="1">
+
+    <tr>
+        <th>Key</th>
+        <th>Actions</th>
+    </tr>
+    {% for sshkey in sshkeys %}
+        <tr>
+            <td>{{ sshkey.key }}</td>
+            <td>
+                <form method="POST" action="/portal/sshkeys/delete/">
+                    {% csrf_token %}
+                    <input type="hidden" name="sshkey_id" value="{{ sshkey.id }}">
+                    <input type="submit" value="Delete key">
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+
+Add a new key:
+<form method="POST" action="/portal/sshkeys/add/">
+    {% csrf_token %}
+    Key contents:
+    <textarea name="sshkey"></textarea>
+    <input type="submit" value="Add key">
+</form>
+
+{% endblock %}

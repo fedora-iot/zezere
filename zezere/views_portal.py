@@ -1,10 +1,13 @@
+from django.core.exceptions import ValidationError
 from django.db import transaction
+from django.http import Http404
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 
 from rules.contrib.views import permission_required
 
-from zezere.models import Device, RunRequest, device_getter
+from zezere.models import Device, RunRequest, device_getter, SSHKey
 
 
 @login_required
@@ -78,11 +81,9 @@ def new_runreq(request, mac_addr):
 
 
 @permission_required(Device.get_perm("provision"), fn=device_getter)
+@require_POST
 def clean_runreq(request, mac_addr):
     device = get_object_or_404(Device, mac_address=mac_addr.upper())
-
-    if request.method != "POST":
-        raise Exception("Invalid request method")
 
     if device.run_request is None:
         raise Exception("Device did not have runrequest")
@@ -91,3 +92,42 @@ def clean_runreq(request, mac_addr):
     device.full_clean()
     device.save()
     return redirect("portal_devices")
+
+
+@login_required
+def sshkeys(request):
+    sshkeys = SSHKey.objects.filter(owner=request.user)
+    return render(
+        request,
+        'portal/sshkeys.html',
+        {
+            'sshkeys': sshkeys,
+        },
+    )
+
+
+@login_required
+@require_POST
+def remove_ssh_key(request):
+    keyid = request.POST["sshkey_id"]
+    sshkey = get_object_or_404(SSHKey, id=keyid)
+    if not request.user.has_perm(SSHKey.get_perm("delete"), sshkey):
+        raise Http404()
+    sshkey.delete()
+    return redirect("portal_sshkeys")
+
+
+@login_required
+@require_POST
+def add_ssh_key(request):
+    keyval = request.POST["sshkey"].strip()
+    if not keyval:
+        return redirect("portal_sshkeys")
+
+    key = SSHKey(
+        owner=request.user,
+        key=keyval,
+    )
+    key.full_clean()
+    key.save()
+    return redirect("portal_sshkeys")

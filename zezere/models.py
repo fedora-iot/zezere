@@ -4,8 +4,9 @@ import json
 
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.core.validators import RegexValidator, URLValidator
+from django.core.validators import RegexValidator
 from django.contrib.auth.models import User
+from django.http import HttpRequest
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 
@@ -17,6 +18,7 @@ from .runreqs import (
     validate_runreq_autoid,
     generate_auto_runreq,
 )
+from . import ignconfig
 
 
 class AttrDict(dict):
@@ -131,6 +133,27 @@ class RunRequest(RulesModel):
 models.signals.post_init.connect(generate_auto_runreq, sender=RunRequest)
 
 
+class SSHKey(RulesModel):
+    class Meta:
+        rules_permissions = {
+            "add": rules.rules.is_authenticated,
+            "view": rules.owns_sshkey,
+            "change": rules.owns_sshkey,
+            "delete": rules.owns_sshkey,
+        }
+
+    owner: models.ForeignKey = models.ForeignKey(
+        User,
+        on_delete=models.PROTECT,
+        related_name='sshkeys',
+        default=None,
+    )
+    key: models.CharField = models.CharField(
+        "SSH Key",
+        max_length=255,
+    )
+
+
 class Device(RulesModel):
     class Meta:
         rules_permissions = {
@@ -184,6 +207,23 @@ class Device(RulesModel):
         blank=True,
         null=True,
     )
+
+    def get_ignition_config(
+            self,
+            request: HttpRequest) -> ignconfig.IgnitionConfig:
+        if not self.run_request:
+            raise ValueError("Ignition config requested without run request")
+
+        cfgobj = ignconfig.IgnitionConfig()
+
+        # Add owner SSH keys to root
+        rootuser = ignconfig.PasswdUser("root")
+        rootuser.sshAuthorizedKeys = [sshkey.key
+                                      for sshkey
+                                      in self.owner.sshkeys.filter()]
+        cfgobj.add_user(rootuser)
+
+        return cfgobj
 
 
 def device_getter(request, mac_addr):

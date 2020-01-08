@@ -1,10 +1,14 @@
+from typing import Dict, Any
+
 import logging
 import os
 
 from django.http import (
+    HttpRequest,
+    JsonResponse,
     FileResponse,
     HttpResponse,
-    HttpResponseNotFound,
+    Http404,
     StreamingHttpResponse,
 )
 from django.shortcuts import get_object_or_404
@@ -28,12 +32,18 @@ ARCHES = {
 }
 
 
-def render_for_device(device, request, template_name, context=None,
-                      content_type=None, status=None, using=None):
+def render_for_device(
+        device: Device,
+        request: HttpRequest,
+        template_name: str,
+        context: Dict[str, Any] = None,
+        content_type: str = None,
+        status: int = None) -> HttpResponse:
+
     content = loader.render_to_string(
         template_name,
         context,
-        request, using=using,
+        request,
     )
 
     # Make replacements
@@ -75,10 +85,10 @@ def index(request):
 def arch_file(request, arch, filetype):
     archfiles = ARCHES.get(arch)
     if not archfiles:
-        return HttpResponseNotFound("Architecture not found")
+        return Http404("Architecture not found")
     filename = archfiles.get(filetype)
     if not filename:
-        return HttpResponseNotFound("File not found for architecture")
+        return Http404("File not found for architecture")
     app_root = os.path.abspath(os.path.dirname(__file__))
     path = os.path.join(app_root, "efi_binaries", arch, filename)
     return FileResponse(open(path, 'rb'), content_type="application/efi")
@@ -185,17 +195,10 @@ def kickstart(request, mac_addr):
 
 
 def ignition_cfg(request, mac_addr):
-    device = get_object_or_404(Device, mac_address=mac_addr.upper())
-    context = {
-        "device": device,
-    }
-    return render_for_device(
-        device,
-        request,
-        'netboot/ignition_cfg',
-        context,
-        content_type='text/plain',
-    )
+    device: Device = get_object_or_404(Device, mac_address=mac_addr.upper())
+    if device.run_request is None:
+        raise Http404("No run request for device")
+    return JsonResponse(device.get_ignition_config(request).generate_config())
 
 
 def postboot(request, mac_addr):
