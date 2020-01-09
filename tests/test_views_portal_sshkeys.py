@@ -3,7 +3,7 @@ from django.http import HttpResponseNotFound
 from . import TestCase
 
 
-class SSHKeyTest(TestCase):
+class PortalSSHKeyTest(TestCase):
     def test_key_list(self):
         with self.loggedin_as():
             resp = self.client.get(
@@ -61,7 +61,7 @@ class SSHKeyTest(TestCase):
             self.assertEqual(len(resp.context['sshkeys']), 0)
 
     def test_other_person_key(self):
-        with self.loggedin_as('testuser1'):
+        with self.loggedin_as(self.USER_1):
             resp = self.client.post(
                 "/portal/sshkeys/add/",
                 {"sshkey": "somekeyvalue<script>"},
@@ -70,7 +70,7 @@ class SSHKeyTest(TestCase):
             self.assertEqual(len(resp.context['sshkeys']), 1)
             user1key = resp.context['sshkeys'][0]
 
-        with self.loggedin_as('testuser2'):
+        with self.loggedin_as(self.USER_2):
             resp = self.client.post(
                 "/portal/sshkeys/add/",
                 {"sshkey": "someotherkey"},
@@ -88,7 +88,7 @@ class SSHKeyTest(TestCase):
             )
             self.assertIsInstance(resp, HttpResponseNotFound)
 
-        with self.loggedin_as('testuser1'):
+        with self.loggedin_as(self.USER_1):
             resp = self.client.get(
                 "/portal/sshkeys/",
                 follow=True,

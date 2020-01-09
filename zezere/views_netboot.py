@@ -85,13 +85,15 @@ def index(request):
 def arch_file(request, arch, filetype):
     archfiles = ARCHES.get(arch)
     if not archfiles:
-        return Http404("Architecture not found")
+        raise Http404("Architecture not found")
     filename = archfiles.get(filetype)
     if not filename:
-        return Http404("File not found for architecture")
+        raise Http404("File not found for architecture")
     app_root = os.path.abspath(os.path.dirname(__file__))
     path = os.path.join(app_root, "efi_binaries", arch, filename)
-    return FileResponse(open(path, 'rb'), content_type="application/efi")
+    return FileResponse(
+        open(path, 'rb'),
+        content_type="application/efi")
 
 
 def static_grub_cfg(request, arch):
@@ -105,9 +107,9 @@ def static_proxy(request, arch, mac_addr, filetype):
     device = get_object_or_404(Device, mac_address=mac_addr.upper())
 
     if device.run_request is None:
-        raise Exception("No run request for device")
+        raise Http404()
     elif device.run_request.type == RunRequest.TYPE_EFI:
-        raise Exception("Invalid runreq type for proxydl")
+        raise Http404()
 
     dlurl = None
     if filetype == "kernel":
@@ -116,7 +118,7 @@ def static_proxy(request, arch, mac_addr, filetype):
         dlurl = device.run_request.initrd_url
 
     if not dlurl:
-        raise Exception("Invalid filetype")
+        raise Http404()
 
     dlurl = replace_device_strings(request, dlurl, device)
 
@@ -185,6 +187,12 @@ def kickstart(request, mac_addr):
     context = {
         "device": device,
     }
+
+    if device.run_request is None:
+        raise Http404()
+    elif device.run_request.type == RunRequest.TYPE_EFI:
+        raise Http404()
+
     return render_for_device(
         device,
         request,
@@ -196,17 +204,19 @@ def kickstart(request, mac_addr):
 
 def ignition_cfg(request, mac_addr):
     device: Device = get_object_or_404(Device, mac_address=mac_addr.upper())
+
     if device.run_request is None:
-        raise Http404("No run request for device")
+        raise Http404()
+
     return JsonResponse(device.get_ignition_config(request).generate_config())
 
 
 def postboot(request, mac_addr):
     device = get_object_or_404(Device, mac_address=mac_addr.upper())
     if not device.run_request:
-        raise ValueError("Device has no run request")
+        raise Http404()
     if 'next' not in device.run_request.settings:
-        raise ValueError("Current runrequest does not have a next state")
+        raise Http404()
 
     nextrunreq = get_object_or_404(
         RunRequest,

@@ -1,6 +1,6 @@
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied
 from django.db import transaction
-from django.http import Http404
+from django.http import Http404, HttpResponseBadRequest
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
@@ -25,10 +25,9 @@ def claim(request):
             device = get_object_or_404(
                 Device,
                 mac_address=request.POST['mac_address'],
-                owner__isnull=True,
             )
             if not request.user.has_perm(Device.get_perm("claim"), device):
-                raise Exception("Not allowed to claim")
+                raise PermissionDenied()
 
             device.owner = request.user
             device.save()
@@ -63,6 +62,8 @@ def new_runreq(request, mac_addr):
     if request.method == "POST":
         rrid = request.POST["runrequest"]
         runreq = get_object_or_404(RunRequest, id=rrid)
+        if not request.user.has_perm(RunRequest.get_perm("use"), runreq):
+            raise Http404()
         device.run_request = runreq
         device.full_clean()
         device.save()
@@ -86,7 +87,7 @@ def clean_runreq(request, mac_addr):
     device = get_object_or_404(Device, mac_address=mac_addr.upper())
 
     if device.run_request is None:
-        raise Exception("Device did not have runrequest")
+        return HttpResponseBadRequest()
 
     device.run_request = None
     device.full_clean()

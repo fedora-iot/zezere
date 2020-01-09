@@ -55,10 +55,14 @@ auth_method: Optional[str] = None
 for envvar in os.environ.keys():
     if envvar.startswith('OIDC_'):
         auth_method = 'oidc'
+    if envvar == "LOCAL_AUTH":
+        auth_method = "local"
 
-if auth_method is None:
-    auth_method = 'local'
-    print("No auth configuration variables set, enabling local authentication")
+if auth_method is None:  # pragma: no cover
+    print("No authentication method configured")
+    raise Exception(
+        "Please configure authentication or set the LOCAL_AUTH environment "
+        "variable to use local auth")
 
 # The settings used in other settings
 AUTH_INFO = AUTH_METHODS[auth_method]
