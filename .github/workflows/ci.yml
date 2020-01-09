@@ -32,11 +32,13 @@ jobs:
     - name: Run tests
       env:
         SECRET_KEY: citest
+        LOCAL_AUTH: yes
       run: |
         python -Werror -m coverage run --append manage.py test
     - name: Test migrations
       env:
         SECRET_KEY: citest
+        LOCAL_AUTH: yes
       run: |
         python -m coverage run --append manage.py migrate
     - name: Report on test coverage
