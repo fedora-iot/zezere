@@ -1,5 +1,7 @@
 from . import TestCase
 
+import json
+
 from django.core.exceptions import ValidationError
 
 from zezere.models import RunRequest
@@ -70,9 +72,43 @@ class ModelsRunReqTest(TestCase):
         self.assertEqual(len(ex.exception.messages), 1)
 
     def test_validation_nonauto_ef(self):
-        RunRequest(
+        rreq = RunRequest(
             auto_generated_id=None,
             owner=self.get_user(self.USER_1),
             type=RunRequest.TYPE_EFI,
             efi_application='/somewhere.efi',
-        ).full_clean()
+        )
+        rreq.full_clean()
+        self.assertEqual(
+            str(rreq),
+            "Unnamed runrequest",
+        )
+
+    def test_validation_nonauto_invalid_type(self):
+        with self.assertRaises(ValidationError) as ex:
+            RunRequest(
+                auto_generated_id=None,
+                owner=self.get_user(self.USER_1),
+                type="--",
+                efi_application='/somewhere.efi',
+            ).full_clean()
+        self.assertEqual(len(ex.exception.messages), 2)
+        self.assertIn("Invalid runreq type", ex.exception.messages)
+
+    def test_settings(self):
+        rreq = RunRequest(
+            auto_generated_id=None,
+            owner=self.get_user(self.USER_1),
+            type=RunRequest.TYPE_EFI,
+            efi_application='/somewhere.efi',
+            raw_settings=json.dumps(
+                {
+                    "foo": "bar",
+                    "baz": {
+                        "bar": "foo",
+                    }
+                },
+            ),
+        )
+        self.assertEqual(rreq.settings.foo, "bar")
+        self.assertEqual(rreq.settings.baz.bar, "foo")

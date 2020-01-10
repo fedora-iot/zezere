@@ -191,9 +191,6 @@ class Device(RulesModel):
     def __str__(self):
         return "Device %s" % self.mac_address
 
-    def clean_mac_address(self):
-        return self.cleaned_data['mac_address'].upper()
-
     mac_address: models.CharField = models.CharField(
         "Device MAC Address",
         max_length=20,

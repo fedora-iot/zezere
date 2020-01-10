@@ -1,7 +1,7 @@
 import os
 
 
-#from .settings_auth import AUTH_INFO
+from .settings_auth import AUTH_INFO
 from .settings_auth import *
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -35,7 +35,7 @@ INSTALLED_APPS = [
 ]
 
 REST_FRAMEWORK = {}
-if AUTH_INFO.get('drf_default_authentication_classes'):
+if AUTH_INFO.get('drf_default_authentication_classes'):  # pragma: no cover
     REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'] = AUTH_INFO['drf_default_authentication_classes']
 
 MIDDLEWARE = [
