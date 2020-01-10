@@ -6,10 +6,7 @@ from zezere import models
 
 
 class NetbootTest(TestCase):
-    fixtures = [
-        'fedora_installed.json',
-        'fedora_iot_runreqs.json',
-    ]
+    fixtures = ["fedora_installed.json", "fedora_iot_runreqs.json"]
 
     def test_index(self):
         resp = self.client.get("/netboot")
@@ -27,15 +24,15 @@ class NetbootTest(TestCase):
         devurl = "/netboot/x86_64/grubcfg/%s" % self.DEVICE_1
         resp = self.client.get(devurl)
         self.assertTemplateUsed(resp, "netboot/grubcfg")
-        self.assertIsNotNone(resp.context['device'])
+        self.assertIsNotNone(resp.context["device"])
 
     def test_dynamic_grub_cfg_new_device(self):
         devurl = "/netboot/x86_64/grubcfg/FF:FF:FF:FF:FF:FF"
         resp = self.client.get(devurl)
         self.assertTemplateUsed(resp, "netboot/grubcfg")
-        self.assertIsNotNone(resp.context['device'])
+        self.assertIsNotNone(resp.context["device"])
 
-    @patch('logging.Logger.error')
+    @patch("logging.Logger.error")
     def test_dynamic_grub_cfg_same_mac_diff_arch(self, mock_error):
         # This returns a ValidationError because the MAC already exists
         # but was not found (different architecture)
@@ -57,7 +54,7 @@ class NetbootTest(TestCase):
                     resp = self.client.head(dlurl)
                     self.assertEqual(resp.status_code, 404)
 
-    @patch('requests.get')
+    @patch("requests.get")
     def test_static_proxy_invalid_filetype(self, mock_get):
         dlurl = "/netboot/x86_64/proxydl/%s/nosuchfile" % self.DEVICE_1
         with self.loggedin_as():
@@ -66,7 +63,7 @@ class NetbootTest(TestCase):
                     resp = self.client.head(dlurl)
                     self.assertEqual(resp.status_code, 404)
 
-    @patch('requests.get')
+    @patch("requests.get")
     def test_static_proxy_kernel(self, mock_get):
         dlurl = "/netboot/x86_64/proxydl/%s/kernel" % self.DEVICE_1
         with self.loggedin_as():
@@ -74,12 +71,8 @@ class NetbootTest(TestCase):
                 with self.device_with_runreq(dev, self.RUNREQ_RAWHIDE):
                     resp = self.client.head(dlurl)
                     self.assertEqual(resp.status_code, 200)
-                    self.assertIn(
-                        'get().headers.__getitem__',
-                        resp['Content-Length'],
-                    )
-                    self.assertEqual(resp['Content-Type'],
-                                     'application/octet-stream')
+                    self.assertIn("get().headers.__getitem__", resp["Content-Length"])
+                    self.assertEqual(resp["Content-Type"], "application/octet-stream")
 
         mock_get.assert_called_once_with(
             "https://kojipkgs.fedoraproject.org/compose/iot/"
@@ -87,7 +80,7 @@ class NetbootTest(TestCase):
             stream=True,
         )
 
-    @patch('requests.get')
+    @patch("requests.get")
     def test_static_proxy_initrd(self, mock_get):
         dlurl = "/netboot/x86_64/proxydl/%s/initrd" % self.DEVICE_1
         with self.loggedin_as():
@@ -95,12 +88,8 @@ class NetbootTest(TestCase):
                 with self.device_with_runreq(dev, self.RUNREQ_RAWHIDE):
                     resp = self.client.head(dlurl)
                     self.assertEqual(resp.status_code, 200)
-                    self.assertIn(
-                        'get().headers.__getitem__',
-                        resp['Content-Length'],
-                    )
-                    self.assertEqual(resp['Content-Type'],
-                                     'application/octet-stream')
+                    self.assertIn("get().headers.__getitem__", resp["Content-Length"])
+                    self.assertEqual(resp["Content-Type"], "application/octet-stream")
 
         mock_get.assert_called_once_with(
             "https://kojipkgs.fedoraproject.org/compose/iot/"
@@ -115,7 +104,7 @@ class NetbootTest(TestCase):
                 with self.device_with_runreq(dev, self.RUNREQ_RAWHIDE):
                     resp = self.client.get(ksurl)
                     self.assertTemplateUsed(resp, "netboot/kickstart")
-                    self.assertIsNotNone(resp.context['device'])
+                    self.assertIsNotNone(resp.context["device"])
 
     def test_kickstart_no_runreq(self):
         ksurl = "/netboot/kickstart/%s" % self.DEVICE_1
@@ -141,8 +130,7 @@ class NetbootTest(TestCase):
                     self.assertEqual(resp.status_code, 200)
                     dev.refresh_from_db()
                     self.assertEqual(
-                        dev.run_request.auto_generated_id,
-                        self.RUNREQ_INSTALLED,
+                        dev.run_request.auto_generated_id, self.RUNREQ_INSTALLED
                     )
 
     def test_postboot_no_runreq(self):
@@ -168,7 +156,7 @@ class NetbootTest(TestCase):
         resp._closable_objects[0].close()
 
         self.assertEqual(resp.status_code, 200)
-        self.assertEqual(resp['Content-Type'], 'application/efi')
+        self.assertEqual(resp["Content-Type"], "application/efi")
 
     def test_arch_file_double_slash(self, *mocks):
         resp = self.client.get("/netboot/x86_64//initial")
@@ -178,7 +166,7 @@ class NetbootTest(TestCase):
         resp._closable_objects[0].close()
 
         self.assertEqual(resp.status_code, 200)
-        self.assertEqual(resp['Content-Type'], 'application/efi')
+        self.assertEqual(resp["Content-Type"], "application/efi")
 
     def test_arch_file_invalid_arch(self):
         resp = self.client.get("/netboot/myarch/initial")
@@ -197,11 +185,12 @@ class NetbootTest(TestCase):
 
     def ign_cfg_sanity_check(self, value):
         seenusers = set()
-        for userobj in value['passwd']['users']:
+        for userobj in value["passwd"]["users"]:
             self.assertFalse(
-                userobj['name'] in seenusers,
-                "User %s twice in ign config" % userobj['name'])
-            seenusers.add(userobj['name'])
+                userobj["name"] in seenusers,
+                "User %s twice in ign config" % userobj["name"],
+            )
+            seenusers.add(userobj["name"])
 
     def test_ignition_cfg(self):
         ignurl = "/netboot/ignition/%s" % self.DEVICE_1
@@ -212,22 +201,15 @@ class NetbootTest(TestCase):
                     self.assertEqual(resp.status_code, 200)
                     resp = resp.json()
                     self.ign_cfg_sanity_check(resp)
+                    self.assertEqual(resp["passwd"]["users"][0]["name"], "root")
                     self.assertEqual(
-                        resp['passwd']['users'][0]['name'],
-                        'root',
-                    )
-                    self.assertEqual(
-                        resp['passwd']['users'][0]['sshAuthorizedKeys'],
-                        [],
+                        resp["passwd"]["users"][0]["sshAuthorizedKeys"], []
                     )
 
     def test_ignition_cfg_with_keys(self):
         ignurl = "/netboot/ignition/%s" % self.DEVICE_1
         with self.loggedin_as() as user:
-            models.SSHKey(
-                owner=user,
-                key="mykeycontents",
-            ).save()
+            models.SSHKey(owner=user, key="mykeycontents").save()
 
             with self.claimed_device(self.DEVICE_1) as dev:
                 with self.device_with_runreq(dev, self.RUNREQ_INSTALLED):
@@ -235,11 +217,8 @@ class NetbootTest(TestCase):
                     self.assertEqual(resp.status_code, 200)
                     resp = resp.json()
                     self.ign_cfg_sanity_check(resp)
+                    self.assertEqual(resp["passwd"]["users"][0]["name"], "root")
                     self.assertEqual(
-                        resp['passwd']['users'][0]['name'],
-                        'root',
-                    )
-                    self.assertEqual(
-                        resp['passwd']['users'][0]['sshAuthorizedKeys'],
-                        ['mykeycontents'],
+                        resp["passwd"]["users"][0]["sshAuthorizedKeys"],
+                        ["mykeycontents"],
                     )

@@ -19,22 +19,23 @@ def ping(request):
 
 def logout(request):
     django_logout(request)
-    return redirect('index')
+    return redirect("index")
 
 
 def profile(request):
-    return redirect('/')
+    return redirect("/")
 
 
 class SignUp(generic.CreateView):
     form_class = UserCreationForm
-    success_url = reverse_lazy('login')
-    template_name = 'registration/signup.html'
+    success_url = reverse_lazy("login")
+    template_name = "registration/signup.html"
 
 
 class UnownedDevicesViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows unowned devices to be seen.
     """
+
     queryset = Device.objects.filter(owner__isnull=True)
     serializer_class = UnownedDeviceSerializer

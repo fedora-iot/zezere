@@ -8,8 +8,6 @@ register = template.Library()
 
 @register.simple_tag(takes_context=True)
 def render_runreq_grubcfg(context, device):
-    return mark_safe(generate_runreq_grubcfg(
-        context['request'],
-        device,
-        device.run_request,
-    ))
+    return mark_safe(
+        generate_runreq_grubcfg(context["request"], device, device.run_request)
+    )

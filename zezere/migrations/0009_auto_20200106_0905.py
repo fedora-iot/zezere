@@ -5,19 +5,21 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('zezere', '0008_runrequest_raw_settings'),
-    ]
+    dependencies = [("zezere", "0008_runrequest_raw_settings")]
 
     operations = [
         migrations.AlterField(
-            model_name='runrequest',
-            name='initrd_url',
-            field=models.URLField(blank=True, max_length=255, null=True, verbose_name='InitRD URL'),
+            model_name="runrequest",
+            name="initrd_url",
+            field=models.URLField(
+                blank=True, max_length=255, null=True, verbose_name="InitRD URL"
+            ),
         ),
         migrations.AlterField(
-            model_name='runrequest',
-            name='kernel_url',
-            field=models.URLField(blank=True, max_length=255, null=True, verbose_name='Kernel URL'),
+            model_name="runrequest",
+            name="kernel_url",
+            field=models.URLField(
+                blank=True, max_length=255, null=True, verbose_name="Kernel URL"
+            ),
         ),
     ]

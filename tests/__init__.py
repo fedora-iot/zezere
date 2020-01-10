@@ -26,19 +26,16 @@ class TestCase(djangoTestCase):
     def setUpTestData(cls):
         for macaddr in (cls.DEVICE_1, cls.DEVICE_2, cls.DEVICE_3):
             models.Device(
-                mac_address=macaddr,
-                architecture="x86_64",
-                last_ip_address="127.0.0.1",
+                mac_address=macaddr, architecture="x86_64", last_ip_address="127.0.0.1"
             ).save()
 
         for username in (cls.USER_1, cls.USER_2):
-            User.objects.create_user(username, password='testpass')
+            User.objects.create_user(username, password="testpass")
 
     @contextmanager
     def loggedin_as(self, username: str = USER_1):
         self.assertIsNone(self._cur_user)
-        self.assertTrue(
-            self.client.login(username=username, password='testpass'))
+        self.assertTrue(self.client.login(username=username, password="testpass"))
         self._cur_user = self.get_user(username)
         try:
             yield self._cur_user
@@ -86,8 +83,7 @@ class TestCase(djangoTestCase):
 
     @contextmanager
     def device_with_runreq(self, device: models.Device, runreq_autoid: str):
-        rreq = models.RunRequest.objects.get(
-            auto_generated_id=runreq_autoid)
+        rreq = models.RunRequest.objects.get(auto_generated_id=runreq_autoid)
         self.assertIsNotNone(rreq)
         device.run_request = rreq
         device.full_clean()

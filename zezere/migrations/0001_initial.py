@@ -10,30 +10,84 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-    ]
+    dependencies = [migrations.swappable_dependency(settings.AUTH_USER_MODEL)]
 
     operations = [
         migrations.CreateModel(
-            name='Device',
+            name="Device",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('mac_address', models.CharField(max_length=20, validators=[django.core.validators.RegexValidator('^([0-9A-F]{2}[:]){5}([0-9A-F]{2})$')], verbose_name='Device MAC Address')),
-                ('hostname', models.CharField(blank=True, default=None, max_length=200, null=True, verbose_name='Device hostname')),
-                ('last_ip_address', models.CharField(max_length=50, verbose_name='Last check-in IP address')),
-                ('owner', models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.PROTECT, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "mac_address",
+                    models.CharField(
+                        max_length=20,
+                        validators=[
+                            django.core.validators.RegexValidator(
+                                "^([0-9A-F]{2}[:]){5}([0-9A-F]{2})$"
+                            )
+                        ],
+                        verbose_name="Device MAC Address",
+                    ),
+                ),
+                (
+                    "hostname",
+                    models.CharField(
+                        blank=True,
+                        default=None,
+                        max_length=200,
+                        null=True,
+                        verbose_name="Device hostname",
+                    ),
+                ),
+                (
+                    "last_ip_address",
+                    models.CharField(
+                        max_length=50, verbose_name="Last check-in IP address"
+                    ),
+                ),
+                (
+                    "owner",
+                    models.ForeignKey(
+                        blank=True,
+                        default=None,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='RunRequest',
+            name="RunRequest",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                )
             ],
         ),
         migrations.AddField(
-            model_name='device',
-            name='run_request',
-            field=models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.SET_NULL, to='zezere.RunRequest'),
+            model_name="device",
+            name="run_request",
+            field=models.ForeignKey(
+                blank=True,
+                default=None,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="zezere.RunRequest",
+            ),
         ),
     ]

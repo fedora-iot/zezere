@@ -9,19 +9,19 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('zezere', '0010_sshkey'),
+        ("zezere", "0010_sshkey"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='runrequest',
-            name='owner',
+            model_name="runrequest",
+            name="owner",
             field=models.ForeignKey(
                 blank=True,
                 default=None,
                 null=True,
                 on_delete=django.db.models.deletion.PROTECT,
-                to=settings.AUTH_USER_MODEL
+                to=settings.AUTH_USER_MODEL,
             ),
-        ),
+        )
     ]

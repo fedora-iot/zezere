@@ -10,39 +10,33 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('zezere', '0009_auto_20200106_0905'),
+        ("zezere", "0009_auto_20200106_0905"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='SSHKey',
+            name="SSHKey",
             fields=[
                 (
-                    'id',
+                    "id",
                     models.AutoField(
                         auto_created=True,
                         primary_key=True,
                         serialize=False,
-                        verbose_name='ID'
-                    )
+                        verbose_name="ID",
+                    ),
                 ),
+                ("key", models.CharField(max_length=255, verbose_name="SSH Key")),
                 (
-                    'key',
-                    models.CharField(
-                        max_length=255,
-                        verbose_name='SSH Key'
-                    )
-                ),
-                (
-                    'owner',
+                    "owner",
                     models.ForeignKey(
                         default=None,
                         on_delete=django.db.models.deletion.PROTECT,
-                        related_name='sshkeys',
-                        to=settings.AUTH_USER_MODEL
-                    )
+                        related_name="sshkeys",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
                 ),
             ],
             bases=(rules.contrib.models.RulesModelMixin, models.Model),
-        ),
+        )
     ]

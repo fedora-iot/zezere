@@ -5,14 +5,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('zezere', '0007_auto_20191021_1444'),
-    ]
+    dependencies = [("zezere", "0007_auto_20191021_1444")]
 
     operations = [
         migrations.AddField(
-            model_name='runrequest',
-            name='raw_settings',
-            field=models.TextField(blank=True, null=True, verbose_name='JSON-encoded settings'),
-        ),
+            model_name="runrequest",
+            name="raw_settings",
+            field=models.TextField(
+                blank=True, null=True, verbose_name="JSON-encoded settings"
+            ),
+        )
     ]

@@ -22,64 +22,41 @@ from .runreqs import replace_device_strings
 
 
 ARCHES = {
-    "x86_64": {
-        "initial": "shimx64.efi",
-        "grubx64.efi": "grubx64.efi",
-    },
-    "aarch64": {
-        "initial": "BOOTAA64.EFI",
-    },
+    "x86_64": {"initial": "shimx64.efi", "grubx64.efi": "grubx64.efi"},
+    "aarch64": {"initial": "BOOTAA64.EFI"},
 }
 
 
 def render_for_device(
-        device: Device,
-        request: HttpRequest,
-        template_name: str,
-        context: Dict[str, Any] = None,
-        content_type: str = None,
-        status: int = None) -> HttpResponse:
+    device: Device,
+    request: HttpRequest,
+    template_name: str,
+    context: Dict[str, Any] = None,
+    content_type: str = None,
+    status: int = None,
+) -> HttpResponse:
 
-    content = loader.render_to_string(
-        template_name,
-        context,
-        request,
-    )
+    content = loader.render_to_string(template_name, context, request)
 
     # Make replacements
-    content = content.replace(
-        ":urls.base:",
-        request.build_absolute_uri("/"),
-    )
+    content = content.replace(":urls.base:", request.build_absolute_uri("/"))
     if device:
         content = content.replace(
             ":urls.kickstart:",
-            request.build_absolute_uri(
-                f'/netboot/kickstart/{device.mac_address}'),
+            request.build_absolute_uri(f"/netboot/kickstart/{device.mac_address}"),
         )
-        content = content.replace(
-            ":arch:",
-            device.architecture,
-        )
-        content = content.replace(
-            ":mac_addr:",
-            device.mac_address,
-        )
+        content = content.replace(":arch:", device.architecture)
+        content = content.replace(":mac_addr:", device.mac_address)
 
     return HttpResponse(content, content_type, status)
 
 
 def index(request):
     context = {
-        'service_url': request.build_absolute_uri('/netboot'),
-        'arches': ARCHES.keys(),
+        "service_url": request.build_absolute_uri("/netboot"),
+        "arches": ARCHES.keys(),
     }
-    return render_for_device(
-        None,
-        request,
-        "netboot/index.html",
-        context,
-    )
+    return render_for_device(None, request, "netboot/index.html", context)
 
 
 def arch_file(request, arch, filetype):
@@ -91,9 +68,7 @@ def arch_file(request, arch, filetype):
         raise Http404("File not found for architecture")
     app_root = os.path.abspath(os.path.dirname(__file__))
     path = os.path.join(app_root, "efi_binaries", arch, filename)
-    return FileResponse(
-        open(path, 'rb'),
-        content_type="application/efi")
+    return FileResponse(open(path, "rb"), content_type="application/efi")
 
 
 def static_grub_cfg(request, arch):
@@ -126,26 +101,20 @@ def static_proxy(request, arch, mac_addr, filetype):
     resp.raise_for_status()
 
     ourresp = StreamingHttpResponse(
-        resp.iter_content(chunk_size=8192),
-        content_type='application/octet-stream',
+        resp.iter_content(chunk_size=8192), content_type="application/octet-stream"
     )
-    ourresp['Content-Length'] = resp.headers['Content-Length']
+    ourresp["Content-Length"] = resp.headers["Content-Length"]
     return ourresp
 
 
 def dynamic_grub_cfg(request, arch, mac_addr):
-    context = {
-        'service_url': request.build_absolute_uri('/'),
-    }
+    context = {"service_url": request.build_absolute_uri("/")}
 
     try:
         remote_ip, _ = get_client_ip(request)
 
         try:
-            device = Device.objects.get(
-                mac_address=mac_addr.upper(),
-                architecture=arch,
-            )
+            device = Device.objects.get(mac_address=mac_addr.upper(), architecture=arch)
             if device.last_ip_address != remote_ip:
                 device.last_ip_address = remote_ip
                 device.save()
@@ -158,13 +127,9 @@ def dynamic_grub_cfg(request, arch, mac_addr):
             )
             device.full_clean()
             device.save()
-        context['device'] = device
+        context["device"] = device
         return render_for_device(
-            device,
-            request,
-            'netboot/grubcfg',
-            context,
-            content_type='text/plain',
+            device, request, "netboot/grubcfg", context, content_type="text/plain"
         )
 
     except Exception:
@@ -176,17 +141,15 @@ def dynamic_grub_cfg(request, arch, mac_addr):
         return render_for_device(
             device,
             request,
-            'netboot/grubcfg_fallback',
+            "netboot/grubcfg_fallback",
             context,
-            content_type='text/plain',
+            content_type="text/plain",
         )
 
 
 def kickstart(request, mac_addr):
     device = get_object_or_404(Device, mac_address=mac_addr.upper())
-    context = {
-        "device": device,
-    }
+    context = {"device": device}
 
     if device.run_request is None:
         raise Http404()
@@ -194,11 +157,7 @@ def kickstart(request, mac_addr):
         raise Http404()
 
     return render_for_device(
-        device,
-        request,
-        'netboot/kickstart',
-        context,
-        content_type='text/plain',
+        device, request, "netboot/kickstart", context, content_type="text/plain"
     )
 
 
@@ -215,12 +174,11 @@ def postboot(request, mac_addr):
     device = get_object_or_404(Device, mac_address=mac_addr.upper())
     if not device.run_request:
         raise Http404()
-    if 'next' not in device.run_request.settings:
+    if "next" not in device.run_request.settings:
         raise Http404()
 
     nextrunreq = get_object_or_404(
-        RunRequest,
-        auto_generated_id=device.run_request.settings['next'],
+        RunRequest, auto_generated_id=device.run_request.settings["next"]
     )
     device.run_request = nextrunreq
     device.save()
