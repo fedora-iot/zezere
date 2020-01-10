@@ -21,6 +21,15 @@ class NetbootTest(TestCase):
         self.assertContains(resp, 'configfile "')
 
     def test_dynamic_grub_cfg(self):
+        with self.loggedin_as():
+            with self.claimed_device(self.DEVICE_1) as dev:
+                with self.device_with_runreq(dev, self.RUNREQ_RAWHIDE):
+                    devurl = "/netboot/x86_64/grubcfg/%s" % self.DEVICE_1
+                    resp = self.client.get(devurl)
+                    self.assertTemplateUsed(resp, "netboot/grubcfg")
+                    self.assertIsNotNone(resp.context["device"])
+
+    def test_dynamic_grub_cfg_no_runreq(self):
         devurl = "/netboot/x86_64/grubcfg/%s" % self.DEVICE_1
         resp = self.client.get(devurl)
         self.assertTemplateUsed(resp, "netboot/grubcfg")
