@@ -17,9 +17,31 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='SSHKey',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('key', models.CharField(max_length=255, verbose_name='SSH Key')),
-                ('owner', models.ForeignKey(default=None, on_delete=django.db.models.deletion.PROTECT, related_name='sshkeys', to=settings.AUTH_USER_MODEL)),
+                (
+                    'id',
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID'
+                    )
+                ),
+                (
+                    'key',
+                    models.CharField(
+                        max_length=255,
+                        verbose_name='SSH Key'
+                    )
+                ),
+                (
+                    'owner',
+                    models.ForeignKey(
+                        default=None,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name='sshkeys',
+                        to=settings.AUTH_USER_MODEL
+                    )
+                ),
             ],
             bases=(rules.contrib.models.RulesModelMixin, models.Model),
         ),
