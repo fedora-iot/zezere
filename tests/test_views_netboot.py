@@ -20,7 +20,7 @@ class NetbootTest(TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertContains(resp, 'configfile "')
 
-    def test_dynamic_grub_cfg(self):
+    def test_dynamic_grub_cfg_ok(self):
         with self.loggedin_as():
             with self.claimed_device(self.DEVICE_1) as dev:
                 with self.device_with_runreq(dev, self.RUNREQ_RAWHIDE):
@@ -28,6 +28,41 @@ class NetbootTest(TestCase):
                     resp = self.client.get(devurl)
                     self.assertTemplateUsed(resp, "netboot/grubcfg")
                     self.assertIsNotNone(resp.context["device"])
+
+    def test_dynamic_grub_cfg_ef(self):
+        with self.loggedin_as():
+            with self.claimed_device(self.DEVICE_1) as dev:
+                with self.device_with_runreq(dev, self.RUNREQ_INSTALLED):
+                    devurl = "/netboot/x86_64/grubcfg/%s" % self.DEVICE_1
+                    resp = self.client.get(devurl)
+                    self.assertTemplateUsed(resp, "netboot/grubcfg")
+                    self.assertIsNotNone(resp.context["device"])
+
+    @patch("logging.Logger.error")
+    def test_dynamic_grub_cfg_invalid_runreq(self, logging_mock):
+        rreq = models.RunRequest(
+            auto_generated_id=None,
+            owner=self.get_user(self.USER_1),
+            type="--",
+            efi_application="/somewhere.efi",
+        )
+        rreq.save()
+
+        self.assertIsNone(rreq.typestr)
+
+        with self.loggedin_as():
+            with self.claimed_device(self.DEVICE_1) as dev:
+                dev.run_request = rreq
+                dev.save()
+                devurl = "/netboot/x86_64/grubcfg/%s" % self.DEVICE_1
+                resp = self.client.get(devurl)
+                self.assertTemplateUsed(resp, "netboot/grubcfg")
+                self.assertIsNotNone(resp.context["device"])
+                self.assertContains(resp, "Something has gone wrong")
+                dev.run_request = None
+                dev.save()
+
+        logging_mock.assert_called_once()
 
     def test_dynamic_grub_cfg_no_runreq(self):
         devurl = "/netboot/x86_64/grubcfg/%s" % self.DEVICE_1
