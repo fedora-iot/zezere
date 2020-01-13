@@ -17,7 +17,7 @@ jobs:
         go get github.com/openshift/source-to-image/cmd/s2i
     - name: s2i build
       run: |
-        s2i build . registry.access.redhat.com/ubi8/python-36 docker.pkg.github.com/fedora-iot/zezere/zezere:justbuilt
+        $HOME/go/bin/s2i build . registry.access.redhat.com/ubi8/python-36 docker.pkg.github.com/fedora-iot/zezere/zezere:justbuilt
     - name: Docker Login
       uses: azure/docker-login@v1
       with:
