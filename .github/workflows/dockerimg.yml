@@ -3,6 +3,9 @@ on:
   push:
     branches:
     - master
+  schedule:
+  # Do a nightly build/push, so that any vulns in deps don't linger
+  - cron:  '0 0 * * *'
 jobs:
   publish:
     runs-on: ubuntu-latest
