@@ -15,7 +15,7 @@ pull_request_rules:
     - author=@fedora-iot/zezere
     - label=automerge
     - status-success=DCO
-    - status-success=build
+    - status-success=python_test
     actions:
       merge:
         method: rebase

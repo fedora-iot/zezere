@@ -3,7 +3,7 @@ on:
   - push
   - pull_request
 jobs:
-  build:
+  python_test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
@@ -47,7 +47,15 @@ jobs:
     - name: Ensure code quality change
       run: |
         diff-quality --violations=flake8 --fail-under=100
-    - name: Test building a container
+
+  full_test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build a server container
       run: |
         $HOME/go/bin/s2i build . registry.access.redhat.com/ubi8/python-36 zezere:testimg
-
+    - name: Run a server
+      run: |
+        # TODO
+        true
