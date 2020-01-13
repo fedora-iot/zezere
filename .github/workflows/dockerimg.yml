@@ -13,13 +13,24 @@ jobs:
         go get github.com/openshift/source-to-image/cmd/s2i
     - name: s2i build
       run: |
-        $HOME/go/bin/s2i build . registry.access.redhat.com/ubi8/python-36 docker.pkg.github.com/fedora-iot/zezere/zezere:latest
-    - name: Docker Login
+        $HOME/go/bin/s2i build . registry.access.redhat.com/ubi8/python-36 zezere:latest
+    - name: Docker Login to GitHub packages
       uses: azure/docker-login@v1
       with:
         login-server: docker.pkg.github.com
         username: $GITHUB_ACTOR
         password: ${{ secrets.GITHUB_TOKEN }}
-    - name: Docker push latest
+    - name: Docker push latest to GitHub Packages
       run: |
+        docker tag zezere:latest docker.pkg.github.com/fedora-iot/zezere/zezere:latest
         docker push docker.pkg.github.com/fedora-iot/zezere/zezere:latest
+    - name: Docker Login to Quay.io
+      uses: azure/docker-login@v1
+      with:
+        login-server: docker.pkg.github.com
+        username: ${{ secrets.QUAY_USERNAME }}
+        password: ${{ secrets.QUAY_PASSWORD }}
+    - name: Docker push latest to Quay.io
+      run: |
+        docker tag zezere:latest quay.io/fedora-iot/zezere/zezere:latest
+        docker push quay.io/fedora-iot/zezere/zezere:latest
