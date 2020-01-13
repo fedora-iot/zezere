@@ -18,7 +18,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install -r requirements-test.txt
-        go get github.com/openshift/source-to-image/cmd/s2i
     - name: Check typing
       run: |
         mypy zezere
@@ -52,6 +51,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
+    - name: Install s2i
+      run: |
+        go get github.com/openshift/source-to-image/cmd/s2i
     - name: Build a server container
       run: |
         $HOME/go/bin/s2i build . registry.access.redhat.com/ubi8/python-36 zezere:testimg
