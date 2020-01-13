@@ -27,7 +27,7 @@ jobs:
     - name: Docker Login to Quay.io
       uses: azure/docker-login@v1
       with:
-        login-server: docker.pkg.github.com
+        login-server: quay.io
         username: ${{ secrets.QUAY_USERNAME }}
         password: ${{ secrets.QUAY_PASSWORD }}
     - name: Docker push latest to Quay.io
