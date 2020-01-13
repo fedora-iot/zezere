@@ -25,7 +25,7 @@ jobs:
         mypy zezere
     - name: Code style checking
       run: |
-        black --check --py36 zezere tests *.py
+        black --check --target-version py36 zezere tests *.py
     - name: Run tests
       env:
         SECRET_KEY: citest
@@ -49,18 +49,18 @@ jobs:
       run: |
         diff-quality --violations=flake8 --fail-under=100
 
-  full_test:
+  integration_test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
+    - name: Load ip6 iptables
+      run: |
+        sudo modprobe ip6_tables
     - name: apt-get update
       run: sudo apt-get update
     - name: Install system dependencies
       run: |
-        sudo apt-get install qemu python3-libvirt libvirt-bin libdevmapper-dev
-    - name: Start libvirt
-      run: |
-        sudo systemctl start libvirtd.service
+        sudo apt-get install libdevmapper-dev
     - name: Install s2i
       run: |
         go get github.com/openshift/source-to-image/cmd/s2i
@@ -69,5 +69,15 @@ jobs:
         $HOME/go/bin/s2i build . registry.access.redhat.com/ubi8/python-36 zezere:testimg
     - name: Run a server
       run: |
-        # TODO
-        true
+        docker run --name zezere -e LOCAL_AUTH=yes -e SECRET_KEY=citest -e ALLOWED_HOSTS=bootserv --detach --rm -p 8080:8080 -t zezere:testimg
+        docker logs -f zezere &
+    - name: Build the integration test container
+      run: |
+        docker build -t integration -f tests/data/Dockerfile.integration .
+    - name: Start the libvirt container
+      run: |
+        docker run --privileged --detach --rm --device /dev/kvm --name integration integration
+        docker logs -f integration &
+    - name: Run the integration test
+      run: |
+        docker exec -w /src -e SECRET_KEY=citest -e LOCAL_AUTH=yes -e BOOTSERV_IP=172.17.0.1 -e ZEZERE_RUN_INTEGRATION_TEST=yes integration python3 manage.py test tests.test_integration

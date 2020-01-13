@@ -1,0 +1,13 @@
+FROM fedora:31
+
+RUN dnf install -y dnf-plugins-core
+RUN sudo dnf copr enable -y @virtmaint-sig/virt-preview
+
+RUN dnf install -y python3-libvirt libvirt qemu-system-x86 python3-requests python3-pip libpq-devel gcc python3-devel
+
+COPY . /src
+RUN pip install -r /src/requirements.txt
+RUN pip install -r /src/requirements-test.txt
+
+RUN systemctl enable libvirtd
+CMD [ "/sbin/init" ]
