@@ -1,0 +1,37 @@
+name: Run CI tests
+on:
+  push:
+    branches:
+    - master
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+    - name: Install s2i
+      run: |
+        go get github.com/openshift/source-to-image/cmd/s2i
+    - name: s2i build
+      run: |
+        s2i build . registry.access.redhat.com/ubi8/python-36 docker.pkg.github.com/fedora-iot/zezere/zezere:justbuilt
+    - name: Docker Login
+      uses: azure/docker-login@v1
+      with:
+        login-server: docker.pkg.github.com
+        username: $GITHUB_ACTOR
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Docker push latest
+      run: |
+        if [ "$GITHUB_REF" == "refs/heads/master" ];
+        then
+          docker tag docker.pkg.github.com/fedora-iot/zezere/zezere:justbuilt docker.pkg.github.com/fedora-iot/zezere/zezere:latest
+          docker push docker.pkg.github.com/fedora-iot/zezere/zezere:latest
+        fi
+    - name: Push ref tag
+      run: |
+        docker tag docker.pkg.github.com/fedora-iot/zezere/zezere:justbuilt docker.pkg.github.com/fedora-iot/zezere/zezere:$GITHUB_REF
+        docker push docker.pkg.github.com/fedora-iot/zezere/zezere:$GITHUB_REF
