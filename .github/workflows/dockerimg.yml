@@ -32,5 +32,5 @@ jobs:
         password: ${{ secrets.QUAY_PASSWORD }}
     - name: Docker push latest to Quay.io
       run: |
-        docker tag zezere:latest quay.io/fedora-iot/zezere/zezere:latest
-        docker push quay.io/fedora-iot/zezere/zezere:latest
+        docker tag zezere:latest quay.io/fedora-iot/zezere:latest
+        docker push quay.io/fedora-iot/zezere:latest
