@@ -51,6 +51,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
+    - name: Install system dependencies
+      run: |
+        sudo apt-get install qemu python3-libvirt libvirt-bin
+    - name: Start libvirt
+      run: |
+        systemd start libvirtd.service
     - name: Install s2i
       run: |
         go get github.com/openshift/source-to-image/cmd/s2i
