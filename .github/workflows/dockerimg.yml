@@ -23,10 +23,10 @@ jobs:
         login-server: docker.pkg.github.com
         username: $GITHUB_ACTOR
         password: ${{ secrets.GITHUB_TOKEN }}
-    - name: Docker push latest to GitHub Packages
-      run: |
-        docker tag zezere:latest docker.pkg.github.com/fedora-iot/zezere/zezere:latest
-        docker push docker.pkg.github.com/fedora-iot/zezere/zezere:latest
+    #- name: Docker push latest to GitHub Packages
+    #  run: |
+    #    docker tag zezere:latest docker.pkg.github.com/fedora-iot/zezere/zezere:latest
+    #    docker push docker.pkg.github.com/fedora-iot/zezere/zezere:latest
     - name: Docker Login to Quay.io
       uses: azure/docker-login@v1
       with:
