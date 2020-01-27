@@ -5,7 +5,6 @@ Summary:       A provisioning service for Fedora IoT
 License:       MIT
 URL:           https://github.com/fedora-iot/zezere
 Source0:       https://github.com/fedora-iot/zezere/archive/v%{version}.tar.gz#/%{name}-%{version}.tar.gz
-Patch0:        0001-add-setup.py.patch
 
 BuildArch: noarch
 BuildRequires: python3-devel
