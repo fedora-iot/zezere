@@ -57,7 +57,7 @@ jobs:
       run: sudo apt-get update
     - name: Install system dependencies
       run: |
-        sudo apt-get install qemu python3-libvirt libvirt-bin
+        sudo apt-get install qemu python3-libvirt libvirt-bin libdevmapper-dev
     - name: Start libvirt
       run: |
         sudo systemctl start libvirtd.service
