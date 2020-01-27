@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
+    - name: Install system dependencies
+      run: sudo apt-get install libdevmapper-dev
     - name: Install s2i
       run: |
         go get github.com/openshift/source-to-image/cmd/s2i
