@@ -20,6 +20,12 @@ class NetbootTest(TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertContains(resp, 'configfile "')
 
+    def test_static_grub_cfg_head(self):
+        resp = self.client.head("/netboot/x86_64/grub.cfg")
+        # NOTE: This URL will be the one configured in DHCP
+        # Changing this URL is a solid API break.
+        self.assertEqual(resp.status_code, 200)
+
     def test_dynamic_grub_cfg_ok(self):
         with self.loggedin_as():
             with self.claimed_device(self.DEVICE_1) as dev:
@@ -198,6 +204,12 @@ class NetbootTest(TestCase):
         # Hacky fix to silence warning. If this causes failure, the internal
         # django test client API probably changed. This can be safely removed.
         resp._closable_objects[0].close()
+
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp["Content-Type"], "application/efi")
+
+    def test_arch_file_head(self, *mocks):
+        resp = self.client.head("/netboot/x86_64/initial")
 
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp["Content-Type"], "application/efi")
