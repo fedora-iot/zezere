@@ -68,14 +68,22 @@ def arch_file(request, arch, filetype):
         raise Http404("File not found for architecture")
     app_root = os.path.abspath(os.path.dirname(__file__))
     path = os.path.join(app_root, "efi_binaries", arch, filename)
+    if request.method == "HEAD":
+        resp = HttpResponse(b"", content_type="application/efi")
+        resp["Content-Length"] = os.path.getsize(path)
+        return resp
     return FileResponse(open(path, "rb"), content_type="application/efi")
 
 
 def static_grub_cfg(request, arch):
-    return HttpResponse(
-        'configfile "${http_path}/grubcfg/${net_default_mac}"',
-        content_type="text/plain",
-    )
+    contents = 'configfile "${http_path}/grubcfg/${net_default_mac}"'
+    content_len = len(contents)
+    if request.method == "HEAD":
+        contents = b""
+
+    resp = HttpResponse(contents, content_type="text/plain",)
+    resp["Content-Length"] = content_len
+    return resp
 
 
 def static_proxy(request, arch, mac_addr, filetype):
