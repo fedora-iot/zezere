@@ -31,7 +31,7 @@ jobs:
         SECRET_KEY: citest
         LOCAL_AUTH: yes
       run: |
-        python -Werror -m coverage run --branch --append --source=zezere manage.py test
+        python -m coverage run --branch --append --source=zezere manage.py test
     - name: Test migrations
       env:
         SECRET_KEY: citest
