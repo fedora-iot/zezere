@@ -1,5 +1,8 @@
 from setuptools import setup, find_packages
 
+pkgs = find_packages()
+pkgs.remove("tests")
+
 setup(
     name="zezere",
     version="0.1",
@@ -10,7 +13,7 @@ setup(
     license="MPL",
     keywords="provisioning IoT linux",
     url="https://github.com/fedora-iot/zezere",
-    packages=find_packages(),
+    packages=pkgs,
     include_package_data=True,
     platforms="any",
     install_requires=list(val.strip() for val in open("requirements.txt")),
