@@ -11,9 +11,7 @@ ostreesetup --nogpg --osname={{ device.run_request.settings.ostree.osname }} --r
 {% if device.run_request.settings.clear_parts %}
 clearpart --all --initlabel
 zerombr
-part --fstype=ext4 --label=boot --size=2048 /boot
-part --fstype=biosboot --label=esp --size=1024 biosboot
-part --fstype=ext4 --label=root --grow --encrypted --passphrase=provision123 /
+autopart --nohome --encrypted --fstype=xfs --passphrase=provision123
 {% endif %}
 
 reboot
