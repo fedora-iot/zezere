@@ -14,7 +14,11 @@ ostreesetup --nogpg --osname={{ device.run_request.settings.ostree.osname }} --r
 {% if device.run_request.settings.clear_parts %}
 clearpart --all --initlabel
 zerombr
-autopart --nohome --encrypted --fstype=xfs --passphrase=provision123
+reqpart
+part --fstype=ext4 --label=boot --size=1024 /boot
+part pv.01 --size=1024 --grow --encrypted --luks-version=luks2 --passphrase=provision123
+volgroup iotvg pv.01
+logvol / --vgname=iotvg --fstype=ext4 --label=root --name=root --percent 100
 {% endif %}
 
 reboot
