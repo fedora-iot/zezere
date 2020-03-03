@@ -5,6 +5,8 @@ pull_request_rules:
     - label=automerge
     - status-success=DCO
     - status-success=build
+    - status-success=integration_test
+    - status-success=packit/testing-farm-fedora-rawhide-x86_64
     actions:
       merge:
         method: rebase
@@ -16,6 +18,8 @@ pull_request_rules:
     - label=automerge
     - status-success=DCO
     - status-success=python_test
+    - status-success=integration_test
+    - status-success=packit/testing-farm-fedora-rawhide-x86_64
     actions:
       merge:
         method: rebase
