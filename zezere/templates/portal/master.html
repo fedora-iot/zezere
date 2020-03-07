@@ -3,18 +3,76 @@
 <html>
     <head>
         <title>{% block title %}Master title{% endblock %}</title>
+	<!-- load patterfly CSS directly from CloudFlare CDN for now -->
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.24.0/css/patternfly.min.css">
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.24.0/css/patternfly-additions.min.css">
     </head>
     <body>
+    <nav class="navbar navbar-default navbar-pf" role="navigation">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/">
+                <!--<img src="/media/network-wired.svg" alt="Sample Image" />-->Zezere
+            </a>
+        </div>
+      <div class="collapse navbar-collapse navbar-collapse-1">
+        <ul class="nav navbar-nav navbar-utility">
+          <li class="dropdown">
+            <button class="btn btn-link nav-item-iconic" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+              <span title="Help" class="fa pficon-help dropdown-title"></span>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+              <li><a href="#0">Help</a></li>
+              <li><a href="#0">About</a></li>
+            </ul>
+          </li>
         {% if user.is_authenticated %}
-            <a href="/portal/">Home</a>
-            <a href="/accounts/logout/">Log out</a>
-        {% else %}
-            <a href="{% url 'login' %}">Login</a>
+          <li class="dropdown">
+            <button class="btn btn-link dropdown-toggle" data-toggle="dropdown">
+              <span class="pficon pficon-user"></span>
+              <span class="dropdown-title">
+                {{ user.get_username }}<b class="caret"></b>
+              </span>
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <a href="/accounts/logout">Logout</a>
+              </li>
+            </ul>
+          </li>
         {% endif %}
-        <hr />
+        </ul>
+        <ul class="nav navbar-nav navbar-primary">
+        {% if user.is_authenticated %}
+            <li class="active">
+              <a href="/portal" class="active">Home</a>
+            </li>
+            <li>
+              <a href="/portal/claim">Claim Unowned Devices</a>
+            </li>
+            <li>
+              <a href="/portal/sshkeys">SSH Key Management</a>
+            </li>
+            <li>
+              <a href="/portal/devices">Device Management</a>
+            </li>
+        {% else %}
+            <li>
+              <a href="/accounts/login">Log In</a>
+            </li>
+        {% endif %}
+        </ul>
+      </div>
+    </nav>
 
         {% block content %}
         Master content
         {% endblock %}
+	<footer class="container-fluid footer-pf-alt">
+            <p>&copy; 2020 Copyright Information Goes Here</p>
+        </footer>
+	<!-- load jquery, boostrap, and patternfly directly from CloudFlare CDN for now -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.24.0/js/patternfly.min.js"></script>
     </body>
 </html>
