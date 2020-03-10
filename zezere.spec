@@ -25,6 +25,7 @@ Fedora IoT to devices without needing a physical console.
 
 %files
 %license LICENSE
+%{_bindir}/zezere-manage
 %{python3_sitelib}/zezere/
 %{python3_sitelib}/zezere-*
 
