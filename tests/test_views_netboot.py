@@ -201,10 +201,6 @@ class NetbootTest(TestCase):
     def test_arch_file(self, *mocks):
         resp = self.client.get("/netboot/x86_64/initial")
 
-        # Hacky fix to silence warning. If this causes failure, the internal
-        # django test client API probably changed. This can be safely removed.
-        resp._closable_objects[0].close()
-
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp["Content-Type"], "application/efi")
 
@@ -216,10 +212,6 @@ class NetbootTest(TestCase):
 
     def test_arch_file_double_slash(self, *mocks):
         resp = self.client.get("/netboot/x86_64//initial")
-
-        # Hacky fix to silence warning. If this causes failure, the internal
-        # django test client API probably changed. This can be safely removed.
-        resp._closable_objects[0].close()
 
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp["Content-Type"], "application/efi")
