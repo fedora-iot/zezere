@@ -22,9 +22,11 @@ Fedora IoT to devices without needing a physical console.
 
 %install
 %py3_install
+mkdir -p %{buildroot}%{_sharedstatedir}/zezere
 
 %files
 %license LICENSE
+%{_sharedstatedir}/zezere
 %{_bindir}/zezere-manage
 %{python3_sitelib}/zezere/
 %{python3_sitelib}/zezere-*
