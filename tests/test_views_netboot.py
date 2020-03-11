@@ -35,6 +35,32 @@ class NetbootTest(TestCase):
                     self.assertTemplateUsed(resp, "netboot/grubcfg")
                     self.assertIsNotNone(resp.context["device"])
 
+    def test_dynamic_grub_cfg_ok_ip_change(self):
+        with self.loggedin_as():
+            with self.claimed_device(self.DEVICE_1) as dev:
+                with self.device_with_runreq(dev, self.RUNREQ_RAWHIDE):
+                    with patch(
+                        "zezere.views_netboot.get_client_ip",
+                        return_value=("127.0.0.2", None),
+                    ):
+                        devurl = "/netboot/x86_64/grubcfg/%s" % self.DEVICE_1
+                        resp = self.client.get(devurl)
+                        self.assertTemplateUsed(resp, "netboot/grubcfg")
+                        self.assertIsNotNone(resp.context["device"])
+                    dev.refresh_from_db()
+                    self.assertEqual(dev.last_ip_address, "127.0.0.2")
+
+                    with patch(
+                        "zezere.views_netboot.get_client_ip",
+                        return_value=("127.0.0.3", None),
+                    ):
+                        devurl = "/netboot/x86_64/grubcfg/%s" % self.DEVICE_1
+                        resp = self.client.get(devurl)
+                        self.assertTemplateUsed(resp, "netboot/grubcfg")
+                        self.assertIsNotNone(resp.context["device"])
+                    dev.refresh_from_db()
+                    self.assertEqual(dev.last_ip_address, "127.0.0.3")
+
     def test_dynamic_grub_cfg_ef(self):
         with self.loggedin_as():
             with self.claimed_device(self.DEVICE_1) as dev:
@@ -225,7 +251,7 @@ class NetbootTest(TestCase):
         self.assertEqual(resp.status_code, 404)
 
     def test_ignition_cfg_no_runreq(self):
-        ignurl = "/netboot/ignition/%s" % self.DEVICE_1
+        ignurl = "/netboot/x86_64/ignition/%s" % self.DEVICE_1
         with self.loggedin_as():
             with self.claimed_device(self.DEVICE_1):
                 resp = self.client.get(ignurl)
@@ -241,7 +267,7 @@ class NetbootTest(TestCase):
             seenusers.add(userobj["name"])
 
     def test_ignition_cfg(self):
-        ignurl = "/netboot/ignition/%s" % self.DEVICE_1
+        ignurl = "/netboot/x86_64/ignition/%s" % self.DEVICE_1
         with self.loggedin_as():
             with self.claimed_device(self.DEVICE_1) as dev:
                 with self.device_with_runreq(dev, self.RUNREQ_INSTALLED):
@@ -255,7 +281,7 @@ class NetbootTest(TestCase):
                     )
 
     def test_ignition_cfg_with_keys(self):
-        ignurl = "/netboot/ignition/%s" % self.DEVICE_1
+        ignurl = "/netboot/x86_64/ignition/%s" % self.DEVICE_1
         with self.loggedin_as() as user:
             models.SSHKey(owner=user, key="mykeycontents").save()
 

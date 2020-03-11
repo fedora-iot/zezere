@@ -115,26 +115,31 @@ def static_proxy(request, arch, mac_addr, filetype):
     return ourresp
 
 
+def get_or_create_device(request, arch, mac_addr):
+    remote_ip, _ = get_client_ip(request)
+
+    try:
+        device = Device.objects.get(mac_address=mac_addr.upper(), architecture=arch)
+        if device.last_ip_address != remote_ip:
+            device.last_ip_address = remote_ip
+            device.save()
+    except Device.DoesNotExist:
+        # Create new Device
+        device = Device(
+            mac_address=mac_addr.upper(), architecture=arch, last_ip_address=remote_ip,
+        )
+        device.full_clean()
+        device.save()
+
+    return device
+
+
 def dynamic_grub_cfg(request, arch, mac_addr):
     context = {"service_url": request.build_absolute_uri("/")}
 
     try:
-        remote_ip, _ = get_client_ip(request)
+        device = get_or_create_device(request, arch, mac_addr)
 
-        try:
-            device = Device.objects.get(mac_address=mac_addr.upper(), architecture=arch)
-            if device.last_ip_address != remote_ip:
-                device.last_ip_address = remote_ip
-                device.save()
-        except Device.DoesNotExist:
-            # Create new Device
-            device = Device(
-                mac_address=mac_addr.upper(),
-                architecture=arch,
-                last_ip_address=remote_ip,
-            )
-            device.full_clean()
-            device.save()
         context["device"] = device
         return render_for_device(
             device, request, "netboot/grubcfg", context, content_type="text/plain"
@@ -147,7 +152,7 @@ def dynamic_grub_cfg(request, arch, mac_addr):
             exc_info=True,
         )
         return render_for_device(
-            device,
+            None,
             request,
             "netboot/grubcfg_fallback",
             context,
@@ -169,8 +174,8 @@ def kickstart(request, mac_addr):
     )
 
 
-def ignition_cfg(request, mac_addr):
-    device: Device = get_object_or_404(Device, mac_address=mac_addr.upper())
+def ignition_cfg(request, arch, mac_addr):
+    device = get_or_create_device(request, arch, mac_addr)
 
     if device.run_request is None:
         raise Http404()
