@@ -29,13 +29,13 @@ jobs:
     - name: Run tests
       env:
         SECRET_KEY: citest
-        LOCAL_AUTH: yes
+        AUTH_METHOD: local
       run: |
         python -m coverage run --branch --append --source=zezere manage.py test
     - name: Test migrations
       env:
         SECRET_KEY: citest
-        LOCAL_AUTH: yes
+        AUTH_METHOD: local
       run: |
         python -m coverage run --branch --append --source=zezere manage.py migrate
     - name: Report on test coverage
@@ -69,7 +69,7 @@ jobs:
         $HOME/go/bin/s2i build . registry.access.redhat.com/ubi8/python-36 zezere:testimg
     - name: Run a server
       run: |
-        docker run --name zezere -e LOCAL_AUTH=yes -e SECRET_KEY=citest -e ALLOWED_HOSTS=bootserv --detach --rm -p 8080:8080 -t zezere:testimg
+        docker run --name zezere -e AUTH_METHOD=local -e SECRET_KEY=citest -e ALLOWED_HOSTS=bootserv --detach --rm -p 8080:8080 -t zezere:testimg
         docker logs -f zezere &
     - name: Build the integration test container
       run: |
@@ -80,4 +80,4 @@ jobs:
         docker logs -f integration &
     - name: Run the integration test
       run: |
-        docker exec -w /src -e SECRET_KEY=citest -e LOCAL_AUTH=yes -e BOOTSERV_IP=172.17.0.1 -e ZEZERE_RUN_INTEGRATION_TEST=yes integration python3 manage.py test tests.test_integration
+        docker exec -w /src -e SECRET_KEY=citest -e AUTH_METHOD=local -e BOOTSERV_IP=172.17.0.1 -e ZEZERE_RUN_INTEGRATION_TEST=yes integration python3 manage.py test tests.test_integration

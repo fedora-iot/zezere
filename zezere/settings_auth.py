@@ -5,6 +5,8 @@ import os
 from django.shortcuts import redirect
 from django.urls import path, include
 
+from .settings_external import get
+
 
 def urls_oidc():
     return [
@@ -40,30 +42,25 @@ REST_FRAMEWORK: Dict[str, List[str]] = {
     ]
 }
 
-auth_method: Optional[str] = None
+auth_method = get("global", "auth_method", "AUTH_METHOD")
 
-# Try to auto-detect the used auth method
-for envvar in os.environ.keys():
-    if envvar.startswith("OIDC_"):  # pragma: no cover
-        auth_method = "oidc"
-    if envvar == "LOCAL_AUTH":
-        auth_method = "local"
-
-if auth_method is None:  # pragma: no cover
-    print("No authentication method configured")
+if auth_method not in AUTH_METHODS:
     raise Exception(
-        "Please configure authentication or set the LOCAL_AUTH environment "
-        "variable to use local auth"
+        "Auth method '%s' is not known. Valid: %s" % (auth_method, AUTH_METHODS.keys())
     )
 
 # The settings used in other settings
 AUTH_INFO = AUTH_METHODS[auth_method]
 
 # OpenID Connect configuration
-OIDC_RP_CLIENT_ID = os.environ.get("OIDC_RP_CLIENT_ID")
-OIDC_RP_CLIENT_SECRET = os.environ.get("OIDC_RP_CLIENT_SECRET")
-OIDC_OP_AUTHORIZATION_ENDPOINT = os.environ.get("OIDC_OP_AUTHORIZATION_ENDPOINT")
-OIDC_OP_TOKEN_ENDPOINT = os.environ.get("OIDC_OP_TOKEN_ENDPOINT")
-OIDC_OP_USER_ENDPOINT = os.environ.get("OIDC_OP_USER_ENDPOINT")
-OIDC_OP_JWKS_ENDPOINT = os.environ.get("OIDC_OP_JWKS_ENDPOINT")
-OIDC_RP_SIGN_ALGO = os.environ.get("OIDC_RP_SIGN_ALGO")
+# RP Settings
+OIDC_RP_CLIENT_ID = get("oidc.rp", "client_id", "OIDC_RP_CLIENT_ID")
+OIDC_RP_CLIENT_SECRET = get("oidc.rp", "client_secret", "OIDC_RP_CLIENT_SECRET")
+OIDC_RP_SIGN_ALGO = get("oidc.rp", "sign_algo", "OIDC_RP_SIGN_ALGO")
+# OP Info
+OIDC_OP_AUTHORIZATION_ENDPOINT = get(
+    "oidc.op", "authorization_endpoint", "OIDC_OP_AUTHORIZATION_ENDPOINT"
+)
+OIDC_OP_TOKEN_ENDPOINT = get("oidc.op", "token_endpoint", "OIDC_OP_TOKEN_ENDPOINT")
+OIDC_OP_USER_ENDPOINT = get("oidc.op", "userinfo_endpoint", "OIDC_OP_USER_ENDPOINT")
+OIDC_OP_JWKS_ENDPOINT = get("oidc.op", "jwks_endpoint", "OIDC_OP_JWKS_ENDPOINT")

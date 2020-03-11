@@ -1,7 +1,11 @@
+from typing import Dict
+
 import os
 
 
+from .settings_external import get, getboolean
 from .settings_auth import AUTH_INFO
+
 from .settings_auth import *
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -9,12 +13,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = get("global", "secret_key", "SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG", "no").lower() == "yes"
+DEBUG = getboolean("global", "debug", "DEBUG")
 
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split()
+ALLOWED_HOSTS = [
+    x.strip() for x in get("global", "allowed_hosts", "ALLOWED_HOSTS").split()
+]
 
 # Application definition
 
@@ -71,13 +77,12 @@ WSGI_APPLICATION = "zezere.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
-    }
-}
+DATABASES: Dict[str, Dict[str, str]] = {"default": {}}
 
+for default_key in ("engine", "name", "user", "password", "host", "port"):
+    val = get("database", default_key, "DATABASE_%s" % default_key)
+    if val:
+        DATABASES["default"][default_key.upper()] = val
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
@@ -117,3 +122,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = "/static/"
+
+secheadername = get("secure_proxy_ssl_header", "header", "SECURE_PROXY_SSL_HEADER_NAME")
+secheadervalue = get(
+    "secure_proxy_ssl_header", "value", "SECURE_PROXY_SSL_HEADER_VALUE"
+)
+SECURE_PROXY_SSL_HEADER = (secheadername, secheadervalue) if secheadername else None
