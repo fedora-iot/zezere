@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from . import TestCase
 
 from zezere import models
@@ -20,21 +22,27 @@ class PortalDevicesTest(TestCase):
 
     def test_claim_device(self):
         with self.loggedin_as():
-            resp = self.client.post(
-                "/portal/claim/", {"mac_address": self.DEVICE_1}, follow=True
-            )
-            self.assertTemplateUsed(resp, "portal/claim.html")
-            self.assertEqual(len(resp.context["unclaimed_devices"]), 2)
-            self.assertNotContains(resp, self.DEVICE_1)
+            with patch(
+                "zezere.views_portal.get_client_ip", return_value=("127.0.0.1", None),
+            ):
+                resp = self.client.post(
+                    "/portal/claim/", {"mac_address": self.DEVICE_1}, follow=True
+                )
+                self.assertTemplateUsed(resp, "portal/claim.html")
+                self.assertEqual(len(resp.context["unclaimed_devices"]), 2)
+                self.assertNotContains(resp, self.DEVICE_1)
 
     def test_claim_claimed_device(self):
         self.claim_device(self.DEVICE_1, self.USER_2)
         with self.loggedin_as(self.USER_1):
-            resp = self.client.post(
-                "/portal/claim/", {"mac_address": self.DEVICE_1}, follow=True
-            )
-            self.assertTemplateNotUsed(resp, "portal/claim.html")
-            self.assertEqual(resp.status_code, 403)
+            with patch(
+                "zezere.views_netboot.get_client_ip", return_value=("127.0.0.1", None),
+            ):
+                resp = self.client.post(
+                    "/portal/claim/", {"mac_address": self.DEVICE_1}, follow=True
+                )
+                self.assertTemplateNotUsed(resp, "portal/claim.html")
+                self.assertEqual(resp.status_code, 403)
 
     def test_list_runreqs_unowned_device(self):
         dev1url = "/portal/devices/runreq/%s/" % self.DEVICE_1

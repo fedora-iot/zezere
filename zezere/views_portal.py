@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 
 from rules.contrib.views import permission_required
+from ipware import get_client_ip
 
 from zezere.models import Device, RunRequest, device_getter, SSHKey
 
@@ -27,7 +28,12 @@ def claim(request):
             device.save()
         return redirect("/portal/claim/")
 
-    context = {"unclaimed_devices": Device.objects.filter(owner__isnull=True)}
+    remote_ip, _ = get_client_ip(request)
+    context = {
+        "unclaimed_devices": Device.objects.filter(
+            owner__isnull=True, last_ip_address=remote_ip
+        )
+    }
     return render(request, "portal/claim.html", context)
 
 

@@ -48,6 +48,11 @@ class TestCase(djangoTestCase):
         self.assertIsNotNone(user)
         return user
 
+    def get_device(self, device: str) -> models.Device:
+        device = models.Device.objects.get(mac_address=device)
+        self.assertIsNotNone(device)
+        return device
+
     def claim_device(self, device: str, username: str):
         user = self.get_user(username)
         dev = models.Device.objects.get(mac_address=device)
