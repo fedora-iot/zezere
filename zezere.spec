@@ -17,6 +17,8 @@ Fedora IoT to devices without needing a physical console.
 
 %package ignition
 Summary: Ignition client for Zezere
+Requires: python3-setuptools
+Requires: ignition
 
 %description ignition
 An Ignition client for Zezere managed systems.
