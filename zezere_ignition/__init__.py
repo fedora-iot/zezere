@@ -54,7 +54,14 @@ def get_zezere_url():
 
 def run_ignition_stage(config_file: str, stage: str):
     print("Running stage %s with config file %s" % (stage, config_file))
-    cmd = [IGNITION_BINARY_PATH, "--platform", "file", "--stage", stage]
+    cmd = [
+        IGNITION_BINARY_PATH,
+        "--platform",
+        "file",
+        "--stage",
+        stage,
+        "--log-to-stdout",
+    ]
     procenv = os.environ.copy()
     procenv["IGNITION_CONFIG_FILE"] = config_file
 
@@ -72,6 +79,7 @@ def run_ignition(config_url: str):
             },
         }
         ignfile.write(json.dumps(cfgobj))
+        ignfile.flush()
         for stage in ["disks", "fetch", "files", "mount", "umount"]:
             run_ignition_stage(ignfile.name, stage)
 
