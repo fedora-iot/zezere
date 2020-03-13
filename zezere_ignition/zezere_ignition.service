@@ -3,4 +3,4 @@ Description=Run Ignition for Zezere
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/zezere_ignition
+ExecStart=/usr/bin/zezere-ignition
