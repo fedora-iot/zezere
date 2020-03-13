@@ -5,6 +5,7 @@ import json
 import platform
 from subprocess import run as sp_run
 from tempfile import NamedTemporaryFile
+from sys import stderr
 import os
 
 
@@ -71,7 +72,6 @@ def run_ignition(config_url: str):
             },
         }
         ignfile.write(json.dumps(cfgobj))
-        print(cfgobj)
         for stage in ["disks", "fetch", "files", "mount", "umount"]:
             run_ignition_stage(ignfile.name, stage)
 
@@ -79,13 +79,13 @@ def run_ignition(config_url: str):
 def main():
     zezere_url = get_zezere_url()
     if zezere_url is None:
-        print("No Zezere URL configured, exiting")
+        print("No Zezere URL configured, exiting", file=stderr)
         return
 
     def_intf = get_primary_interface()
     def_intf_mac = get_interface_mac(def_intf)
     if def_intf_mac is None:
-        print("Unable to determine default interface, exiting")
+        print("Unable to determine default interface, exiting", file=stderr)
         return
 
     arch = platform.machine()
