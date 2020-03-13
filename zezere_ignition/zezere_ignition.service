@@ -1,0 +1,6 @@
+[Unit]
+Description=Run Ignition for Zezere
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/zezere_ignition

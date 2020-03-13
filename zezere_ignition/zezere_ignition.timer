@@ -1,0 +1,9 @@
+[Unit]
+Description=Trigger Ignition for Zezere until it finishes
+
+[Timer]
+OnActiveSec=10sec
+OnUnitActiveSec=1min
+
+[Install]
+WantedBy=timers.target

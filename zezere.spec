@@ -10,9 +10,16 @@ BuildArch: noarch
 BuildRequires: python3-devel
 BuildRequires: python3-setuptools
 
+
 %description
 Zezere is a provisioning service for Fedora IoT. It can be used for deploying
 Fedora IoT to devices without needing a physical console.
+
+%package ignition
+Summary: Ignition client for Zezere
+
+%description ignition
+An Ignition client for Zezere managed systems.
 
 %prep
 %autosetup -p1
@@ -22,6 +29,10 @@ Fedora IoT to devices without needing a physical console.
 
 %install
 %py3_install
+cp zezere_ignition/__init__.py %{buildroot}/usr/bin/zezere-ignition
+chmod +x %{buildroot}/usr/bin/zezere-ignition
+mkdir -p %{buildroot}/usr/lib/systemd/system/
+cp zezere_ignition/zezere_ignition.* %{buildroot}/usr/lib/systemd/system/
 mkdir -p %{buildroot}%{_sharedstatedir}/zezere
 
 %files
@@ -30,6 +41,10 @@ mkdir -p %{buildroot}%{_sharedstatedir}/zezere
 %{_bindir}/zezere-manage
 %{python3_sitelib}/zezere/
 %{python3_sitelib}/zezere-*
+
+%files ignition
+%{_bindir}/zezere-ignition
+/usr/lib/systemd/system/*
 
 %changelog
 * Thu Dec  5 2019 Peter Robinson <pbrobinson@fedoraproject.org> 0.1-2

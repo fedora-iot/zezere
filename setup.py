@@ -1,6 +1,7 @@
 from setuptools import setup, find_packages
 
 pkgs = find_packages()
+pkgs.remove("zezere_ignition")
 pkgs.remove("tests")
 
 setup(
