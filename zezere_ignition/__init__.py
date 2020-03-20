@@ -45,7 +45,11 @@ def get_interface_mac(interface: Optional[str]) -> str:
 
 
 def get_zezere_url():
-    paths = ["/etc/zezere-ignition-url", "./zezere-ignition-url"]
+    paths = [
+        "/usr/lib/zezere-ignition-url",
+        "/etc/zezere-ignition-url",
+        "./zezere-ignition-url",
+    ]
     for path in paths:
         if os.path.exists(path):
             with open(path, "r") as urlfile:
@@ -76,7 +80,7 @@ def run_ignition(config_url: str):
             "ignition": {
                 "version": "3.0.0",
                 "config": {"replace": {"source": config_url}},
-            },
+            }
         }
         ignfile.write(json.dumps(cfgobj))
         ignfile.flush()
