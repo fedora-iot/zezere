@@ -70,6 +70,11 @@ urlpatterns = [
         name="netboot_ignition_cfg",
     ),
     path(
+        "/netboot/<str:arch>/ignition/<str:mac_addr>",
+        views_netboot.ignition_cfg,
+        name="netboot_ignition_cfg",
+    ),
+    path(
         "netboot/kickstart/<str:mac_addr>",
         views_netboot.kickstart,
         name="netboot_kickstart",
