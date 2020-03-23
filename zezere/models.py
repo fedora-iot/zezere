@@ -141,7 +141,7 @@ class SSHKey(RulesModel):
     owner: models.ForeignKey = models.ForeignKey(
         User, on_delete=models.PROTECT, related_name="sshkeys", default=None
     )
-    key: models.CharField = models.CharField("SSH Key", max_length=255)
+    key: models.CharField = models.CharField("SSH Key", max_length=1024)
 
 
 class Device(RulesModel):
