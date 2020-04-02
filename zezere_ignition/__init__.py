@@ -105,6 +105,8 @@ def main(args: argparse.Namespace):
     if zezere_url is None:
         print("No Zezere URL configured, exiting", file=stderr)
         return
+    if zezere_url.endswith("/"):
+        zezere_url = zezere_url[:-1]
 
     def_intf = get_primary_interface()
     def_intf_mac = get_interface_mac(def_intf)
