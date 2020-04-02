@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 from typing import Optional
 
+import argparse
 import json
 import platform
 from subprocess import run as sp_run
@@ -89,7 +90,17 @@ def run_ignition(config_url: str):
             run_ignition_stage(ignfile.name, stage)
 
 
-def main():
+def update_banner(url: str, device_id: Optional[str]):
+    if device_id is None:
+        device_id = "device ID not yet known"
+    with open("/run/zezere-ignition-banner", "w") as bannerfile:
+        bannerfile.write(
+            f"Browse to {url} to claim this device ({device_id}) "
+            f"and configure SSH keys deployed\n\n"
+        )
+
+
+def main(args: argparse.Namespace):
     zezere_url = get_zezere_url()
     if zezere_url is None:
         print("No Zezere URL configured, exiting", file=stderr)
@@ -97,6 +108,14 @@ def main():
 
     def_intf = get_primary_interface()
     def_intf_mac = get_interface_mac(def_intf)
+
+    # We still want to put the banner in place if there's no default mac addr yet
+    if args.update_banner:
+        update_banner(zezere_url, def_intf_mac)
+        if args.only_update_banner:
+            print("Updated issue banner")
+            return
+
     if def_intf_mac is None:
         print("Unable to determine default interface, exiting", file=stderr)
         return
@@ -108,5 +127,24 @@ def main():
     run_ignition(url)
 
 
+def get_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Run Ignition from Zezere config")
+
+    parser.add_argument(
+        "--no-update-banner",
+        dest="update_banner",
+        action="store_false",
+        help="Skip updating the TTY banner",
+    )
+    parser.add_argument(
+        "--only-update-banner",
+        dest="only_update_banner",
+        action="store_true",
+        help="Stop after updating TTY banner",
+    )
+
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
-    main()
+    main(get_args())

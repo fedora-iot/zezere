@@ -36,6 +36,7 @@ install zezere_ignition/__init__.py %{buildroot}/usr/bin/zezere-ignition
 chmod +x %{buildroot}/usr/bin/zezere-ignition
 mkdir -p %{buildroot}%{_unitdir}
 install zezere_ignition/zezere_ignition.* %{buildroot}%{_unitdir}/
+install zezere_ignition/zezere_ignition_banner.service %{buildroot}%{_unitdir}/
 mkdir -p %{buildroot}%{_sharedstatedir}/zezere
 
 %files

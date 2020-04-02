@@ -1,0 +1,6 @@
+[Unit]
+Description=Update issue banner to include Zezere instructions
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/zezere-ignition --only-update-banner
