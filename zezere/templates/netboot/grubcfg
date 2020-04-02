@@ -1,5 +1,6 @@
 {% load grubcfg %}
 
+{% include "./grubcfg_debug" %}
 {% include "./grubcfg_user" %}
 
 {% if device.run_request %}

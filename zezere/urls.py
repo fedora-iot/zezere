@@ -94,4 +94,30 @@ urlpatterns = [
         views_netboot.arch_file,
         name="netboot_arch_file_double_slash",
     ),
+    # Netboot debug
+    path(
+        "netboot/debug/<str:arch>/grub.cfg",
+        views_netboot.static_grub_cfg,
+        name="netboot_grubcfg_static",
+    ),
+    path(
+        "netboot/debug/<str:arch>/grubcfg/<str:mac_addr>",
+        views_netboot.dynamic_grub_cfg,
+        name="netboot_grubcfg_dynamic",
+    ),
+    path(
+        "netboot/debug/<str:arch>/proxydl/<str:mac_addr>/<str:filetype>",
+        views_netboot.static_proxy,
+        name="netboot_proxydl",
+    ),
+    path(
+        "netboot/debug/<str:arch>/<str:filetype>",
+        views_netboot.arch_file,
+        name="netboot_arch_file",
+    ),
+    path(
+        "netboot/debug/<str:arch>//<str:filetype>",
+        views_netboot.arch_file,
+        name="netboot_arch_file_double_slash",
+    ),
 ] + AUTH_INFO["urlfunc"]()

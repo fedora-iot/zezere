@@ -1,0 +1,3 @@
+{% if debug %}
+set debug=all
+{% endif %}

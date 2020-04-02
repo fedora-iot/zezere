@@ -77,6 +77,8 @@ def arch_file(request, arch, filetype):
 
 def static_grub_cfg(request, arch):
     contents = 'configfile "${http_path}/grubcfg/${net_default_mac}"'
+    if "debug" in request.path:
+        contents += "\nset debug=all"
     content_len = len(contents)
     if request.method == "HEAD":
         contents = b""
@@ -135,7 +137,10 @@ def get_or_create_device(request, arch, mac_addr):
 
 
 def dynamic_grub_cfg(request, arch, mac_addr):
-    context = {"service_url": request.build_absolute_uri("/")}
+    context = {
+        "service_url": request.build_absolute_uri("/"),
+        "debug": "debug" in request.path,
+    }
 
     try:
         device = get_or_create_device(request, arch, mac_addr)
