@@ -45,7 +45,24 @@ def get_interface_mac(interface: Optional[str]) -> str:
         return addrfile.read().strip()
 
 
+def get_zezere_url_cmdline() -> Optional[str]:
+    cmdline = None
+    with open("/proc/cmdline", "r") as cmdlinefile:
+        cmdline = cmdlinefile.read().strip()
+    for arg in cmdline.split(" "):
+        args = arg.split("=", 2)
+        if len(args) != 2:
+            continue
+        key, val = args
+        if key == "zezere.url":
+            return val.strip()
+
+
 def get_zezere_url():
+    cmdline_url = get_zezere_url_cmdline()
+    if cmdline_url is not None:
+        return cmdline_url
+
     paths = [
         "/usr/lib/zezere-ignition-url",
         "/etc/zezere-ignition-url",

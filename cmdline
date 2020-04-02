@@ -1,0 +1,1 @@
+BOOT_IMAGE=(hd0,gpt2)/vmlinuz-5.6.0-0.rc3.git0.1.fc32.x86_64 root=/dev/mapper/fedora_localhost--live-root ro resume=/dev/mapper/fedora_localhost--live-swap rd.lvm.lv=fedora_localhost-live/root rd.luks.uuid=luks-fb53079c-4b5e-491a-9d54-4a9f13ce028a rd.lvm.lv=fedora_localhost-live/swap rhgb quiet zezere.url=https://provision.fedoraproject.org/
