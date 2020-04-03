@@ -123,8 +123,22 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
+STATIC_ROOT = "static"
+
 secheadername = get("secure_proxy_ssl_header", "header", "SECURE_PROXY_SSL_HEADER_NAME")
 secheadervalue = get(
     "secure_proxy_ssl_header", "value", "SECURE_PROXY_SSL_HEADER_VALUE"
 )
 SECURE_PROXY_SSL_HEADER = (secheadername, secheadervalue) if secheadername else None
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {"console": {"class": "logging.StreamHandler"}},
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": os.getenv("DJANGO_LOG_LEVEL", "INFO"),
+        }
+    },
+}
