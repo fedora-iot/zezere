@@ -60,11 +60,6 @@ urlpatterns = [
         name="netboot_grubcfg_dynamic",
     ),
     path(
-        "netboot/<str:arch>/proxydl/<str:mac_addr>/<str:filetype>",
-        views_netboot.static_proxy,
-        name="netboot_proxydl",
-    ),
-    path(
         "netboot/<str:arch>/ignition/<str:mac_addr>",
         views_netboot.ignition_cfg,
         name="netboot_ignition_cfg",
@@ -104,11 +99,6 @@ urlpatterns = [
         "netboot/debug/<str:arch>/grubcfg/<str:mac_addr>",
         views_netboot.dynamic_grub_cfg,
         name="netboot_grubcfg_dynamic",
-    ),
-    path(
-        "netboot/debug/<str:arch>/proxydl/<str:mac_addr>/<str:filetype>",
-        views_netboot.static_proxy,
-        name="netboot_proxydl",
     ),
     path(
         "netboot/debug/<str:arch>/<str:filetype>",
