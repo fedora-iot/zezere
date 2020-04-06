@@ -135,62 +135,6 @@ class NetbootTest(TestCase):
         self.assertTemplateUsed(resp, "netboot/grubcfg_fallback")
         mock_error.assert_called_once()
 
-    def test_static_proxy_no_runreq(self):
-        dlurl = "/netboot/x86_64/proxydl/%s/kernel" % self.DEVICE_1
-        resp = self.client.head(dlurl)
-        self.assertEqual(resp.status_code, 404)
-
-    def test_static_proxy_efi_runreq(self):
-        dlurl = "/netboot/x86_64/proxydl/%s/kernel" % self.DEVICE_1
-        with self.loggedin_as():
-            with self.claimed_device(self.DEVICE_1) as dev:
-                with self.device_with_runreq(dev, self.RUNREQ_INSTALLED):
-                    resp = self.client.head(dlurl)
-                    self.assertEqual(resp.status_code, 404)
-
-    @patch("requests.get")
-    def test_static_proxy_invalid_filetype(self, mock_get):
-        dlurl = "/netboot/x86_64/proxydl/%s/nosuchfile" % self.DEVICE_1
-        with self.loggedin_as():
-            with self.claimed_device(self.DEVICE_1) as dev:
-                with self.device_with_runreq(dev, self.RUNREQ_RAWHIDE):
-                    resp = self.client.head(dlurl)
-                    self.assertEqual(resp.status_code, 404)
-
-    @patch("requests.get")
-    def test_static_proxy_kernel(self, mock_get):
-        dlurl = "/netboot/x86_64/proxydl/%s/kernel" % self.DEVICE_1
-        with self.loggedin_as():
-            with self.claimed_device(self.DEVICE_1) as dev:
-                with self.device_with_runreq(dev, self.RUNREQ_RAWHIDE):
-                    resp = self.client.head(dlurl)
-                    self.assertEqual(resp.status_code, 200)
-                    self.assertIn("get().headers.__getitem__", resp["Content-Length"])
-                    self.assertEqual(resp["Content-Type"], "application/octet-stream")
-
-        mock_get.assert_called_once_with(
-            "https://kojipkgs.fedoraproject.org/compose/iot/"
-            "latest-Fedora-IoT-32/compose/IoT/x86_64/os/isolinux/vmlinuz",
-            stream=True,
-        )
-
-    @patch("requests.get")
-    def test_static_proxy_initrd(self, mock_get):
-        dlurl = "/netboot/x86_64/proxydl/%s/initrd" % self.DEVICE_1
-        with self.loggedin_as():
-            with self.claimed_device(self.DEVICE_1) as dev:
-                with self.device_with_runreq(dev, self.RUNREQ_RAWHIDE):
-                    resp = self.client.head(dlurl)
-                    self.assertEqual(resp.status_code, 200)
-                    self.assertIn("get().headers.__getitem__", resp["Content-Length"])
-                    self.assertEqual(resp["Content-Type"], "application/octet-stream")
-
-        mock_get.assert_called_once_with(
-            "https://kojipkgs.fedoraproject.org/compose/iot/"
-            "latest-Fedora-IoT-32/compose/IoT/x86_64/os/isolinux/initrd.img",
-            stream=True,
-        )
-
     def test_kickstart(self):
         ksurl = "/netboot/kickstart/%s" % self.DEVICE_1
         with self.loggedin_as():

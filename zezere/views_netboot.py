@@ -88,35 +88,6 @@ def static_grub_cfg(request, arch):
     return resp
 
 
-def static_proxy(request, arch, mac_addr, filetype):
-    device = get_object_or_404(Device, mac_address=mac_addr.upper())
-
-    if device.run_request is None:
-        raise Http404()
-    elif device.run_request.type == RunRequest.TYPE_EFI:
-        raise Http404()
-
-    dlurl = None
-    if filetype == "kernel":
-        dlurl = device.run_request.kernel_url
-    elif filetype == "initrd":
-        dlurl = device.run_request.initrd_url
-
-    if not dlurl:
-        raise Http404()
-
-    dlurl = replace_device_strings(request, dlurl, device)
-
-    resp = requests.get(dlurl, stream=True)
-    resp.raise_for_status()
-
-    ourresp = StreamingHttpResponse(
-        resp.iter_content(chunk_size=8192), content_type="application/octet-stream"
-    )
-    ourresp["Content-Length"] = resp.headers["Content-Length"]
-    return ourresp
-
-
 def get_or_create_device(request, arch, mac_addr):
     remote_ip, _ = get_client_ip(request)
 
