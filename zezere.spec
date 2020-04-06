@@ -9,6 +9,7 @@ Source0:       https://github.com/fedora-iot/zezere/archive/v%{version}.tar.gz#/
 BuildArch: noarch
 BuildRequires: python3-devel
 BuildRequires: python3-setuptools
+BuildRequires: python3-requests
 BuildRequires: systemd
 
 

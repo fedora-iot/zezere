@@ -97,8 +97,8 @@ def replace_device_strings(request, value, device):
 
 def generate_runreq_grubcfg(request, device, runreq):
     if runreq.type == models.RunRequest.TYPE_ONLINE_KERNEL:
-        proxy_kernel_url = "proxydl/:mac_addr:/kernel"
-        proxy_initrd_url = "proxydl/:mac_addr:/initrd"
+        proxy_kernel_url = "static/netboot/:arch:/vmlinuz"
+        proxy_initrd_url = "static/netboot/:arch:/initrd"
 
         return f"""
 linux {proxy_kernel_url} {runreq.kernel_cmd}

@@ -142,3 +142,9 @@ LOGGING = {
         }
     },
 }
+
+STATICFILES_FINDERS = [
+    "zezere.django_staticfiles_netboot_finder",
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+]
