@@ -59,7 +59,7 @@ def index(request):
     return render_for_device(None, request, "netboot/index.html", context)
 
 
-def arch_file(request, arch, filetype):
+def arch_file(request, arch, filetype, flags=None):
     archfiles = ARCHES.get(arch)
     if not archfiles:
         raise Http404("Architecture not found")
@@ -75,9 +75,14 @@ def arch_file(request, arch, filetype):
     return FileResponse(open(path, "rb"), content_type="application/efi")
 
 
-def static_grub_cfg(request, arch):
+def static_grub_cfg(request, arch, flags=None):
+    if flags:
+        flags = flags.split("+")
+    else:
+        flags = []
+
     contents = 'configfile "${http_path}/grubcfg/${net_default_mac}"'
-    if "debug" in request.path:
+    if "debug" in flags:
         contents += "\nset debug=all"
     content_len = len(contents)
     if request.method == "HEAD":
@@ -107,10 +112,14 @@ def get_or_create_device(request, arch, mac_addr):
     return device
 
 
-def dynamic_grub_cfg(request, arch, mac_addr):
+def dynamic_grub_cfg(request, arch, mac_addr, flags=None):
+    if flags:
+        flags = flags.split("+")
+    else:
+        flags = []
     context = {
         "service_url": request.build_absolute_uri("/"),
-        "debug": "debug" in request.path,
+        "flags": flags,
     }
 
     try:

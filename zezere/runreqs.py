@@ -103,7 +103,6 @@ def generate_runreq_grubcfg(request, device, runreq):
         return f"""
 linux {proxy_kernel_url} {runreq.kernel_cmd}
 initrd {proxy_initrd_url}
-boot
         """
 
     elif runreq.type == models.RunRequest.TYPE_EFI:
@@ -112,7 +111,6 @@ insmod part_gpt
 insmod chain
 set root='(hd0,gpt1)'
 chainloader {runreq.settings.efi_path}
-boot
         """
 
     else:

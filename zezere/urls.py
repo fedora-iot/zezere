@@ -89,24 +89,24 @@ urlpatterns = [
         views_netboot.arch_file,
         name="netboot_arch_file_double_slash",
     ),
-    # Netboot debug
+    # Netboot with different options
     path(
-        "netboot/debug/<str:arch>/grub.cfg",
+        "netboot/<str:flags>/<str:arch>/grub.cfg",
         views_netboot.static_grub_cfg,
         name="netboot_grubcfg_static",
     ),
     path(
-        "netboot/debug/<str:arch>/grubcfg/<str:mac_addr>",
+        "netboot/<str:flags>/<str:arch>/grubcfg/<str:mac_addr>",
         views_netboot.dynamic_grub_cfg,
         name="netboot_grubcfg_dynamic",
     ),
     path(
-        "netboot/debug/<str:arch>/<str:filetype>",
+        "netboot/<str:flags>/<str:arch>/<str:filetype>",
         views_netboot.arch_file,
         name="netboot_arch_file",
     ),
     path(
-        "netboot/debug/<str:arch>//<str:filetype>",
+        "netboot/<str:flags>/<str:arch>//<str:filetype>",
         views_netboot.arch_file,
         name="netboot_arch_file_double_slash",
     ),

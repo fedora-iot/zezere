@@ -6,6 +6,9 @@
 {% if device.run_request %}
 
 {% render_runreq_grubcfg device %}
+{% if 'noboot' not in flags %}
+boot
+{% endif %}
 
 {% elif device.owner is not None %}
 

@@ -19,6 +19,7 @@ class NetbootTest(TestCase):
         # Changing this URL is a solid API break.
         self.assertEqual(resp.status_code, 200)
         self.assertContains(resp, 'configfile "')
+        self.assertNotContains(resp, "set debug=all")
 
     def test_static_grub_cfg_head(self):
         resp = self.client.head("/netboot/x86_64/grub.cfg")
@@ -42,6 +43,19 @@ class NetbootTest(TestCase):
                     resp = self.client.get(devurl)
                     self.assertTemplateUsed(resp, "netboot/grubcfg")
                     self.assertIsNotNone(resp.context["device"])
+                    self.assertContains(resp, "\nboot")
+                    self.assertNotContains(resp, "set debug=all")
+
+    def test_dynamic_grub_noboot_cfg_ok(self):
+        with self.loggedin_as():
+            with self.claimed_device(self.DEVICE_1) as dev:
+                with self.device_with_runreq(dev, self.RUNREQ_RAWHIDE):
+                    devurl = "/netboot/noboot/x86_64/grubcfg/%s" % self.DEVICE_1
+                    resp = self.client.get(devurl)
+                    self.assertTemplateUsed(resp, "netboot/grubcfg")
+                    self.assertIsNotNone(resp.context["device"])
+                    self.assertNotContains(resp, "\nboot")
+                    self.assertNotContains(resp, "set debug=all")
 
     def test_dynamic_grub_debug_cfg_ok(self):
         with self.loggedin_as():
@@ -51,6 +65,18 @@ class NetbootTest(TestCase):
                     resp = self.client.get(devurl)
                     self.assertTemplateUsed(resp, "netboot/grubcfg")
                     self.assertIsNotNone(resp.context["device"])
+                    self.assertContains(resp, "\nboot")
+                    self.assertContains(resp, "set debug=all")
+
+    def test_dynamic_grub_debug_noboot_cfg_ok(self):
+        with self.loggedin_as():
+            with self.claimed_device(self.DEVICE_1) as dev:
+                with self.device_with_runreq(dev, self.RUNREQ_RAWHIDE):
+                    devurl = "/netboot/debug+noboot/x86_64/grubcfg/%s" % self.DEVICE_1
+                    resp = self.client.get(devurl)
+                    self.assertTemplateUsed(resp, "netboot/grubcfg")
+                    self.assertIsNotNone(resp.context["device"])
+                    self.assertNotContains(resp, "\nboot")
                     self.assertContains(resp, "set debug=all")
 
     def test_dynamic_grub_cfg_ok_ip_change(self):
