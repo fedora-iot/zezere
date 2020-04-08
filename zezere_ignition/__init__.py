@@ -103,7 +103,7 @@ def run_ignition(config_url: str):
         }
         ignfile.write(json.dumps(cfgobj))
         ignfile.flush()
-        for stage in ["disks", "fetch", "files", "mount", "umount"]:
+        for stage in ["fetch", "disks", "mount", "files", "umount"]:
             run_ignition_stage(ignfile.name, stage)
 
 
