@@ -44,7 +44,7 @@ jobs:
     - name: Ensure test coverage
       run: |
         coverage xml
-        diff-cover coverage.xml --fail-under=100 --exclude="/zezere_ignition*"
+        diff-cover coverage.xml --fail-under=100
     - name: Ensure code quality change
       run: |
         diff-quality --violations=flake8 --fail-under=100

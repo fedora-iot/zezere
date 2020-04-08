@@ -1,12 +1,12 @@
 #!/usr/bin/python3
-from typing import Optional
+from typing import Optional, List
 
 import argparse
 import json
 import platform
 from subprocess import run as sp_run
 from tempfile import NamedTemporaryFile
-from sys import stderr
+import sys
 import os
 
 
@@ -120,7 +120,7 @@ def update_banner(url: str, device_id: Optional[str]):
 def main(args: argparse.Namespace):
     zezere_url = get_zezere_url()
     if zezere_url is None:
-        print("No Zezere URL configured, exiting", file=stderr)
+        print("No Zezere URL configured, exiting", file=sys.stderr)
         return
     if zezere_url.endswith("/"):
         zezere_url = zezere_url[:-1]
@@ -136,7 +136,7 @@ def main(args: argparse.Namespace):
             return
 
     if def_intf_mac is None:
-        print("Unable to determine default interface, exiting", file=stderr)
+        print("Unable to determine default interface, exiting", file=sys.stderr)
         return
 
     arch = platform.machine()
@@ -146,7 +146,7 @@ def main(args: argparse.Namespace):
     run_ignition(url)
 
 
-def get_args() -> argparse.Namespace:
+def get_args(argv: List[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run Ignition from Zezere config")
 
     parser.add_argument(
@@ -162,8 +162,8 @@ def get_args() -> argparse.Namespace:
         help="Stop after updating TTY banner",
     )
 
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 if __name__ == "__main__":
-    main(get_args())
+    main(get_args(sys.argv[1:]))
