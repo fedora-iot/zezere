@@ -88,7 +88,7 @@ def run_ignition_stage(config_file: str, stage: str):
     procenv["IGNITION_CONFIG_FILE"] = config_file
     procenv["IGNITION_WRITE_AUTHORIZED_KEYS_FRAGMENT"] = "false"
 
-    sp_run(cmd, env=procenv, check=True)
+    sp_run(cmd, env=procenv)
 
 
 def run_ignition(config_url: str):
