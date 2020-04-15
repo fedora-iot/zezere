@@ -39,6 +39,8 @@ mkdir -p %{buildroot}%{_unitdir}
 install zezere_ignition/zezere_ignition.* %{buildroot}%{_unitdir}/
 install zezere_ignition/zezere_ignition_banner.service %{buildroot}%{_unitdir}/
 mkdir -p %{buildroot}%{_sharedstatedir}/zezere
+mkdir -p %{buildroot}%{_sysconfdir}/issue.d/
+ln -s /run/zezere-ignition-banner %{buildroot}%{_sysconfdir}/issue.d/zezere_ignition.issue
 
 %files
 %license LICENSE
@@ -46,6 +48,7 @@ mkdir -p %{buildroot}%{_sharedstatedir}/zezere
 %{_bindir}/zezere-manage
 %{python3_sitelib}/zezere/
 %{python3_sitelib}/zezere-*
+%config %{_sysconfdir}/issue.d/zezere_ignition.issue
 
 %files ignition
 %{_bindir}/zezere-ignition
