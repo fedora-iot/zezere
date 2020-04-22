@@ -152,6 +152,11 @@ class NetbootTest(TestCase):
         self.assertTemplateUsed(resp, "netboot/grubcfg")
         self.assertIsNotNone(resp.context["device"])
 
+    def test_dynamic_grub_cfg_new_device_blacklisted_mac(self):
+        devurl = "/netboot/x86_64/grubcfg/52:54:00:12:34:56"
+        resp = self.client.get(devurl)
+        self.assertTemplateUsed(resp, "netboot/grubcfg_fallback")
+
     @patch("logging.Logger.error")
     def test_dynamic_grub_cfg_same_mac_diff_arch(self, mock_error):
         # This returns a ValidationError because the MAC already exists

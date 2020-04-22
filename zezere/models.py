@@ -144,6 +144,11 @@ class SSHKey(RulesModel):
     key: models.CharField = models.CharField("SSH Key", max_length=1024)
 
 
+def validator_disallow_blacklisted_mac(value):
+    if value == "52:54:00:12:34:56":
+        raise ValidationError("Default LibVirt MAC address cannot be used")
+
+
 class Device(RulesModel):
     class Meta:
         rules_permissions = {
@@ -162,7 +167,10 @@ class Device(RulesModel):
         "Device MAC Address",
         max_length=20,
         unique=True,
-        validators=[RegexValidator("^([0-9A-F]{2}[:]){5}([0-9A-F]{2})$")],
+        validators=[
+            RegexValidator("^([0-9A-F]{2}[:]){5}([0-9A-F]{2})$"),
+            validator_disallow_blacklisted_mac,
+        ],
     )
     architecture: models.CharField = models.CharField("Architecture", max_length=50)
     hostname: models.CharField = models.CharField(
