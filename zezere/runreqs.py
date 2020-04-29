@@ -10,7 +10,7 @@ AUTO_RUNREQS = {
     "fedora-iot-stable": {
         "type": "ok",
         "next": "fedora-installed",
-        "compose_root": f"{KOJI_ROOT}/iot/latest-Fedora-IoT-31",
+        "compose_root": f"{KOJI_ROOT}/iot/latest-Fedora-IoT-32",
         "compose_name": "IoT",
         "clear_parts": True,
         "install_type": "ostree",
@@ -24,7 +24,7 @@ AUTO_RUNREQS = {
     "fedora-iot-rawhide": {
         "type": "ok",
         "next": "fedora-installed",
-        "compose_root": f"{KOJI_ROOT}/iot/latest-Fedora-IoT-32",
+        "compose_root": f"{KOJI_ROOT}/iot/latest-Fedora-IoT-33",
         "compose_name": "IoT",
         "clear_parts": True,
         "install_type": "ostree",
