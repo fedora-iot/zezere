@@ -19,6 +19,12 @@ class PortalDevicesTest(TestCase):
             resp = self.client.get("/portal/claim/")
             self.assertTemplateUsed(resp, "portal/claim.html")
             self.assertEqual(len(resp.context["unclaimed_devices"]), 3)
+            self.assertNotContains(resp, self.REMOTE_DEVICE_1)
+        with self.loggedin_as(self.ADMIN_1):
+            resp = self.client.get("/portal/claim/")
+            self.assertTemplateUsed(resp, "portal/claim.html")
+            self.assertEqual(len(resp.context["unclaimed_devices"]), 4)
+            self.assertContains(resp, self.REMOTE_DEVICE_1)
 
     def test_claim_device(self):
         with self.loggedin_as():

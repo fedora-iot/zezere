@@ -10,11 +10,13 @@ class TestCase(djangoTestCase):
     # Some test users
     USER_1: str = "testuser1"
     USER_2: str = "testuser2"
+    ADMIN_1: str = "admin1"
 
     # Some test devices
     DEVICE_1: str = "00:00:00:00:00:00"
     DEVICE_2: str = "11:11:11:11:11:11"
     DEVICE_3: str = "22:22:22:22:22:22"
+    REMOTE_DEVICE_1: str = "33:33:33:33:33:33"
 
     # The initial runreq auto-ids installed by fixtures
     RUNREQ_INSTALLED = "fedora-installed"
@@ -28,6 +30,14 @@ class TestCase(djangoTestCase):
             models.Device(
                 mac_address=macaddr, architecture="x86_64", last_ip_address="127.0.0.1"
             ).save()
+
+        models.Device(
+            mac_address=cls.REMOTE_DEVICE_1,
+            architecture="x86_64",
+            last_ip_address="10.10.10.10",
+        ).save()
+
+        User.objects.create_superuser(cls.ADMIN_1, password="testpass")
 
         for username in (cls.USER_1, cls.USER_2):
             User.objects.create_user(username, password="testpass")

@@ -5,7 +5,11 @@
 {% block title %}Claim unowned devices{% endblock %}
 
 {% block content %}
+{% if super %}
+Unowned devices:
+{% else %}
 Unowned devices from this IP address:
+{% endif %}
 {% for device in unclaimed_devices %}
     {% has_perm 'zezere.claim_device' user device as can_claim_device %}
     {% if can_claim_device %}

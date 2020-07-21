@@ -28,12 +28,12 @@ def claim(request):
             device.save()
         return redirect("/portal/claim/")
 
-    remote_ip, _ = get_client_ip(request)
-    context = {
-        "unclaimed_devices": Device.objects.filter(
-            owner__isnull=True, last_ip_address=remote_ip
-        )
-    }
+    if request.user.is_superuser:
+        unclaimed = Device.objects.filter(owner__isnull=True)
+    else:
+        remote_ip, _ = get_client_ip(request)
+        unclaimed = Device.objects.filter(owner__isnull=True, last_ip_address=remote_ip)
+    context = {"unclaimed_devices": unclaimed, "super": request.user.is_superuser}
     return render(request, "portal/claim.html", context)
 
 
