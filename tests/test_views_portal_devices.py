@@ -29,7 +29,8 @@ class PortalDevicesTest(TestCase):
     def test_claim_device(self):
         with self.loggedin_as():
             with patch(
-                "zezere.views_portal.get_client_ip", return_value=("127.0.0.1", None),
+                "zezere.views_portal.get_client_ip",
+                return_value=("127.0.0.1", None),
             ):
                 resp = self.client.post(
                     "/portal/claim/", {"mac_address": self.DEVICE_1}, follow=True
@@ -42,7 +43,8 @@ class PortalDevicesTest(TestCase):
         self.claim_device(self.DEVICE_1, self.USER_2)
         with self.loggedin_as(self.USER_1):
             with patch(
-                "zezere.views_netboot.get_client_ip", return_value=("127.0.0.1", None),
+                "zezere.views_netboot.get_client_ip",
+                return_value=("127.0.0.1", None),
             ):
                 resp = self.client.post(
                     "/portal/claim/", {"mac_address": self.DEVICE_1}, follow=True

@@ -88,7 +88,10 @@ def static_grub_cfg(request, arch, flags=None):
     if request.method == "HEAD":
         contents = b""
 
-    resp = HttpResponse(contents, content_type="text/plain",)
+    resp = HttpResponse(
+        contents,
+        content_type="text/plain",
+    )
     resp["Content-Length"] = content_len
     return resp
 
@@ -104,7 +107,9 @@ def get_or_create_device(request, arch, mac_addr):
     except Device.DoesNotExist:
         # Create new Device
         device = Device(
-            mac_address=mac_addr.upper(), architecture=arch, last_ip_address=remote_ip,
+            mac_address=mac_addr.upper(),
+            architecture=arch,
+            last_ip_address=remote_ip,
         )
         device.full_clean()
         device.save()

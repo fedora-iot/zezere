@@ -18,6 +18,18 @@ SECRET_KEY = get("global", "secret_key", "SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = getboolean("global", "debug", "DEBUG")
 
+# Set cookie security settings
+SESSION_COOKIE_SECURE = getboolean("global", "secure_cookie", "SECURE_COOKIE")
+CSRF_COOKIE_SECURE = SESSION_COOKIE_SECURE
+SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = True
+
+# Secure headers
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_REFERRER_POLICY = "no-referrer"
+
+
 ALLOWED_HOSTS = [
     x.strip() for x in get("global", "allowed_hosts", "ALLOWED_HOSTS").split()
 ]
@@ -44,6 +56,7 @@ if AUTH_INFO.get("drf_default_authentication_classes"):  # pragma: no cover
     ]
 
 MIDDLEWARE = [
+    "zezere.middlewares.MySecurityMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",

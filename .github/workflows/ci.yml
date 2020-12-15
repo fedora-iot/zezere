@@ -26,6 +26,8 @@ jobs:
     - name: Code style checking
       run: |
         black --check --target-version py36 zezere tests *.py
+    - name: Check security
+      run: bandit -r ./ -ll
     - name: Run tests
       env:
         SECRET_KEY: citest
