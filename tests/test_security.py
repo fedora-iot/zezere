@@ -11,7 +11,7 @@ class SecurityTest(TestCase):
         self.assertEqual(resp["X-Frame-Options"], "DENY")
         self.assertEqual(resp["X-Xss-Protection"], "1; mode=block")
         self.assertEqual(resp["X-Content-Type-Options"], "nosniff")
-        self.assertEqual(resp["Referrer-Policy"], "no-referrer")
+        self.assertIn(resp["Referrer-Policy"], ["no-referrer", "same-origin"])
 
     def test_cookies(self):
         resp = self.client.get("/accounts/login/")
