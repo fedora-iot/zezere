@@ -6,7 +6,8 @@ class MySecurityMiddleware(object):
         response = self.get_response(request)
         response["Content-Security-Policy"] = (
             "default-src; "
-            + "style-src 'self' https://cdnjs.cloudflare.com/;"
-            + "script-src 'self' https://cdnjs.cloudflare.com/;"
+            + "style-src https://apps.fedoraproject.org/;"
+            + "script-src https://apps.fedoraproject.org/;"
+            + "font-src https://apps.fedoraproject.org/;"
         )
         return response
