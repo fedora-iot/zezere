@@ -2,7 +2,7 @@ name: Build and push docker images
 on:
   push:
     branches:
-    - master
+    - main
   schedule:
   # Do a nightly build/push, so that any vulns in deps don't linger
   - cron:  '0 0 * * *'
